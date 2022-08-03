@@ -1,0 +1,17 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: scos-build
+spec:
+  params:
+    - name: version
+      default: "4.11"
+      type: string
+  tasks:
+    - name: scos-build
+      params:
+        - name: version
+          value: $(params.version)
+      taskRef:
+        kind: Task
+        name: scos-build

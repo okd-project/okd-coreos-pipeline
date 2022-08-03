@@ -1,0 +1,48 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: scos-build 
+spec:
+  params:
+  - name: version
+    description: The version repo
+    type: string
+  steps: 
+  - name: assemble
+    image: quay.io/coreos-assembler/coreos-assembler:latest
+    resources:
+      requests:
+        # Today COSA hardcodes 2048 for launching VMs.  We could
+        # probably shrink that in the future.
+        memory: "3Gi"
+        devices.kubevirt.io/kvm: "1"
+      limits:
+        memory: "3Gi"
+        devices.kubevirt.io/kvm: "1"
+    script: |
+      #!/usr/bin/env bash
+      #
+      echo $(params.version) 
+      set -euxo pipefail
+      mkdir -p scos
+      cd scos
+
+      cosa init https://github.com/openshift/os.git
+      ln -snf "manifest-c9s.yaml" "src/config/manifest.yaml"
+      ln -snf "extensions-c9s.yaml" "src/config/extensions.yaml"
+      ln -snf "image-c9s.yaml" "src/config/image.yaml"
+      cp "src/config/repos/c9s.repo" "src/config/c9s.repo"
+      echo -e "[rhel-8-server-ose]\nenabled=1\ngpgcheck=0\nbaseurl=https://mirror.openshift.com/pub/openshift-v4/amd64/dependencies/rpms/4.11-el8-beta/" >> "src/config/c9s.repo"
+      
+      cosa fetch
+      cosa build
+      cosa buildextend-metal4k
+      cosa buildextend-metal
+      cosa buildextend-live
+      cosa kola --basic-qemu-scenarios
+    volumeMounts:
+    - name: workdir
+      mountPath: /srv
+  volumes:
+  - name: workdir
+    emptyDir: {} 
