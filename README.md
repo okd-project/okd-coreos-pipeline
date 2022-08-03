@@ -12,7 +12,7 @@ The pipeline uses a single task for now, `scos-build`, which runs on a `core-ass
 
 Within the task
 * a step that builds the SCOS image
-* future step to test the image
+* future (separate) step to test the image
 * future step to push the image to an S3 bucket
 
 ## Installation
@@ -29,19 +29,36 @@ git clone git@github.com:okd-project/cosa-pipeline.git
 
 ### Install the operator tekton pipeline with kustomize
 
-Execute the following commands
+The pipeline is using [kvm-device-plugin](https://github.com/cgwalters/kvm-device-plugin), which is now part of [KubeVirt](https://github.com/kubevirt). 
 
-```bash
-# assume you logged into your kubernetes cluster
-kubectl apply -k environments/overlays/cicd
+The daemonset for kvm-device-plugin will be available on the OKD cluster in OperateFirst, but needs to be installed for your local clusters.
 
-# check that all resources have deployed
-kubectl get all -n cosa-pipeline
+* For OperateFirst OKD cluster, execute the following commands
 
-# once all pods are in the RUNNING status create a configmap as follows
-# this assumes you have the correct credentials and have logged into the registry to push images to
-kubectl create configmap docker-config --from-file=/$HOME/.docker/config.json -n cosa-pipeline
-```
+    ```bash
+    # assume you logged into your kubernetes cluster on OperateFirst
+    kubectl apply -k environments/overlays/operate-first
+
+    # check that all resources have deployed
+    kubectl get all -n cosa-pipeline
+
+    # once all pods are in the RUNNING status create a configmap as follows
+    # this assumes you have the correct credentials and have logged into the registry to push images to
+    kubectl create configmap docker-config --from-file=/$HOME/.docker/config.json -n cosa-pipeline
+    ```
+* For local (Kind or other) clusters, execute the following commands:
+    ```bash
+    # assume you logged into your kubernetes cluster on OperateFirst
+    kubectl apply -k environments/overlays/local
+
+    # check that all resources have deployed
+    kubectl get all -n cosa-pipeline
+
+    # once all pods are in the RUNNING status create a configmap as follows
+    # this assumes you have the correct credentials and have logged into the registry to push images to
+    kubectl create configmap docker-config --from-file=/$HOME/.docker/config.json -n cosa-pipeline
+    ```
+
 
 ## Usage
 
@@ -67,7 +84,11 @@ The folder structure is as follows :
 ```bash
 ├── environments
 │   └── overlays
-│       └── cicd
+│       ├── local
+│       │   ├── kustomization.yaml
+│       │   └── namespace
+│       │       └── namespace.yaml
+│       └── operate-first
 │           ├── kustomization.yaml
 │           └── namespace
 │               └── namespace.yaml
