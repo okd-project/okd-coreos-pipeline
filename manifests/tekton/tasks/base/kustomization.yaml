@@ -1,0 +1,5 @@
+bases:
+  - git-clone.yaml
+  - scos-build.yaml
+
+
