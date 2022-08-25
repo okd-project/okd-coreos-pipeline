@@ -7,7 +7,19 @@ spec:
   - name: version
     description: The version repo
     type: string
-  steps: 
+  steps:
+  - name: copy-okd-rpms
+    image: registry.ci.openshift.org/origin/4.12:artifacts
+    script: |
+      #!/usr/bin/env bash 
+      set -euxo pipefail
+      mkdir /workdir/okd-rpms
+      cp /srv/repo/openshift-{clients-0.0.1-*,hyperkube-*}.x86_64.rpm /workdir/okd-rpms
+      useradd builder
+      chown -R builder:builder /workdir/okd-rpms
+    volumeMounts:
+    - name: workdir
+      mountPath: /workdir
   - name: assemble
     image: quay.io/coreos-assembler/coreos-assembler:latest
     resources:
@@ -21,19 +33,20 @@ spec:
         devices.kubevirt.io/kvm: "1"
     script: |
       #!/usr/bin/env bash
-      #
-      echo $(params.version) 
       set -euxo pipefail
-      mkdir -p scos
+      echo $(params.version)
+      mkdir scos
       cd scos
-
       cosa init https://github.com/openshift/os.git
+      mv /srv/okd-rpms /srv/scos/
+      createrepo_c /srv/scos/okd-rpms
       ln -snf "manifest-c9s.yaml" "src/config/manifest.yaml"
       ln -snf "extensions-c9s.yaml" "src/config/extensions.yaml"
       ln -snf "image-c9s.yaml" "src/config/image.yaml"
       cp "src/config/repos/c9s.repo" "src/config/c9s.repo"
-      echo -e "[rhel-8-server-ose]\nenabled=1\ngpgcheck=0\nbaseurl=https://mirror.openshift.com/pub/openshift-v4/amd64/dependencies/rpms/4.11-el8-beta/" >> "src/config/c9s.repo"
-      
+      echo -e "\n[okd-rpms]\nname=OKD RPMs\nbaseurl=file:///srv/scos/okd-rpms/\nrepo_gpgcheck=0\ngpgcheck=0\nenabled=1\nmetadata_expire=-1" >> "src/config/c9s.repo"
+      echo -e "\n[okd-copr]\nname=OKD COPR\nbaseurl=https://download.copr.fedorainfracloud.org/results/@OKD/okd/centos-stream-9-\$basearch/\ntype=rpm-md\ngpgcheck=1\ngpgkey=https://download.copr.fedorainfracloud.org/results/@OKD/okd/pubkey.gpg\nrepo_gpgcheck=0\nenabled=1\n" >> "src/config/c9s.repo"
+      sed -i 's/rhel-9-server-ose/okd-rpms\n  - okd-copr/' "src/config/manifest.yaml"
       cosa fetch
       cosa build
       cosa buildextend-metal4k
@@ -45,4 +58,4 @@ spec:
       mountPath: /srv
   volumes:
   - name: workdir
-    emptyDir: {} 
+    emptyDir: {}
