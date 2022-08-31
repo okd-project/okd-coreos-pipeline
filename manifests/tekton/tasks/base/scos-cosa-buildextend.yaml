@@ -13,19 +13,28 @@ spec:
       name: scos-cosa-buildextend
       resources:
         limits:
+          cpu: '1'
           devices.kubevirt.io/kvm: '1'
-          memory: 4Gi
+          memory: 6Gi
         requests:
+          cpu: 500m
           devices.kubevirt.io/kvm: '1'
           memory: 4Gi
-      script: >
+      script: |
         #!/usr/bin/env bash
+
         set -euxo pipefail
+
         echo $(params.version)
+
         cd /srv/scos
+
         cosa buildextend-metal4k
+
         cosa buildextend-metal
+
         cosa buildextend-live
+
   workspaces:
     - mountPath: /srv
       name: srv

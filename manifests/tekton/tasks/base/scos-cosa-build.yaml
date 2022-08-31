@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: scos-cosa-build 
+  name: scos-cosa-build
   namespace: okd-team
 spec:
   params:
@@ -19,11 +19,16 @@ spec:
           devices.kubevirt.io/kvm: '1'
           memory: 4Gi
       script: |
-        #!/usr/bin/env bash 
-        set -euxo pipefail 
-        echo $(params.version) 
+        #!/usr/bin/env bash
+
+        set -euxo pipefail
+
+        echo $(params.version)
+
         cd /srv/scos
+
         cosa fetch
+
         cosa build
   workspaces:
     - mountPath: /srv

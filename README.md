@@ -4,15 +4,18 @@
 
 All the necessary yaml files to deploy a generic tekton pipeline to build SCOS image
 
-**NB** This is a WIP 
+**NB** This is a WIP
 
 ## Description
 
-The pipeline uses a single task for now, `scos-build`, which runs on a `core-assembler` image.
+The list of tasks are :
+* scos-cosa-copy
+* scos-cosa-init
+* scos-cosa-build
+* scos-cosa-buildextend
+* scos-cosa-test
 
-Within the task
-* a step that builds the SCOS image
-* future (separate) step to test the image
+TODO :
 * future step to push the image to an S3 bucket
 
 ## Installation
@@ -40,11 +43,11 @@ The daemonset for kvm-device-plugin will be available on the OKD cluster in Oper
     kubectl apply -k environments/overlays/operate-first
 
     # check that all resources have deployed
-    kubectl get all -n cosa-pipeline
+    kubectl get all -n okd-team
 
     # once all pods are in the RUNNING status create a configmap as follows
     # this assumes you have the correct credentials and have logged into the registry to push images to
-    kubectl create configmap docker-config --from-file=/$HOME/.docker/config.json -n cosa-pipeline
+    kubectl create configmap docker-config --from-file=/$HOME/.docker/config.json -n okd-team
     ```
 * For local (Kind or other) clusters, execute the following commands:
     ```bash
@@ -52,11 +55,11 @@ The daemonset for kvm-device-plugin will be available on the OKD cluster in Oper
     kubectl apply -k environments/overlays/local
 
     # check that all resources have deployed
-    kubectl get all -n cosa-pipeline
+    kubectl get all -n okd-team
 
     # once all pods are in the RUNNING status create a configmap as follows
     # this assumes you have the correct credentials and have logged into the registry to push images to
-    kubectl create configmap docker-config --from-file=/$HOME/.docker/config.json -n cosa-pipeline
+    kubectl create configmap docker-config --from-file=/$HOME/.docker/config.json -n okd-team
     ```
 
 
@@ -65,10 +68,7 @@ The daemonset for kvm-device-plugin will be available on the OKD cluster in Oper
 Execute the following to start a pipeline run
 
 ```bash
-tkn pipeline start scos-all \
---param version=4.12 \
---workspace name=shared-workspace,volumeClaimTemplateFile=manifests/tekton/pipelineruns/workspace-template.yaml \
--n okd-team
+kubectl apply -f manifests/tekton/pipelineruns/scos-pipelinerun.yaml -n okd-team
 ```
 
 ## Next Steps
@@ -83,6 +83,7 @@ tkn pipeline start scos-all \
 The folder structure is as follows :
 
 ```bash
+.
 ├── environments
 │   └── overlays
 │       ├── local
@@ -99,6 +100,7 @@ The folder structure is as follows :
 │       │       ├── kustomization.yaml
 │       │       └── kvm-dev-plg-ds.yaml
 │       ├── pipelineruns
+│       │   ├── scos-pipelinerun.yaml
 │       │   └── workspace-template.yaml
 │       ├── pipelines
 │       │   └── base

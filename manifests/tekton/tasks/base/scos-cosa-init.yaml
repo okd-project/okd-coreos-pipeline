@@ -18,7 +18,7 @@ spec:
         requests:
           devices.kubevirt.io/kvm: '1'
           memory: 1Gi
-      script: >
+      script: |
         #!/usr/bin/env bash 
 
         set -euxo pipefail 
