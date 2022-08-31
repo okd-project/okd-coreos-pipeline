@@ -1,5 +1,8 @@
 bases:
-  - git-clone.yaml
-  - scos-build.yaml
+  - scos-cosa-copy.yaml
+  - scos-cosa-init.yaml
+  - scos-cosa-build.yaml
+  - scos-cosa-buildextend.yaml
+  - scos-cosa-test.yaml
 
 

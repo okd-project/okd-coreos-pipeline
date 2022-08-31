@@ -1,0 +1,31 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: scos-cosa-buildextend
+  namespace: okd-team
+spec:
+  params:
+    - description: The version repo
+      name: version
+      type: string
+  steps:
+    - image: 'quay.io/coreos-assembler/coreos-assembler:latest'
+      name: scos-cosa-buildextend
+      resources:
+        limits:
+          devices.kubevirt.io/kvm: '1'
+          memory: 4Gi
+        requests:
+          devices.kubevirt.io/kvm: '1'
+          memory: 4Gi
+      script: >
+        #!/usr/bin/env bash
+        set -euxo pipefail
+        echo $(params.version)
+        cd /srv/scos
+        cosa buildextend-metal4k
+        cosa buildextend-metal
+        cosa buildextend-live
+  workspaces:
+    - mountPath: /srv
+      name: srv

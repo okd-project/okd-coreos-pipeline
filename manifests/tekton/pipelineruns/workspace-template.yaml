@@ -1,7 +1,7 @@
 spec:
-  storageClassName: standard
+  storageClassName: ocs-external-storagecluster-ceph-rbd
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi
+      storage: 10Gi

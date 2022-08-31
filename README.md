@@ -65,9 +65,10 @@ The daemonset for kvm-device-plugin will be available on the OKD cluster in Oper
 Execute the following to start a pipeline run
 
 ```bash
-tkn pipeline start scos-build \
---param version=4.11 \
--n cosa-pipeline
+tkn pipeline start scos-all \
+--param version=4.12 \
+--workspace name=shared-workspace,volumeClaimTemplateFile=manifests/tekton/pipelineruns/workspace-template.yaml \
+-n okd-team
 ```
 
 ## Next Steps
@@ -83,38 +84,42 @@ The folder structure is as follows :
 
 ```bash
 ├── environments
-│   └── overlays
-│       ├── local
-│       │   ├── kustomization.yaml
-│       │   └── namespace
-│       │       └── namespace.yaml
-│       └── operate-first
-│           ├── kustomization.yaml
-│           └── namespace
-│               └── namespace.yaml
+│   └── overlays
+│       ├── local
+│       │   ├── kustomization.yaml
+│       │   └── namespace
+│       │       └── namespace.yaml
+│       └── operate-first
+│           └── kustomization.yaml
 ├── LICENSE
 ├── manifests
-│   └── tekton
-│       ├── daemonsets
-│       │   └── base
-│       │       ├── kustomization.yaml
-│       │       └── kvm-dev-plg-ds.yaml
-│       ├── pipelineruns
-│       │   └── workspace-template.yaml
-│       ├── pipelines
-│       │   └── base
-│       │       ├── kustomization.yaml
-│       │       └── pipeline-scos-build.yaml
-│       ├── rbac
-│       │   └── base
-│       │       ├── admin.yaml
-│       │       ├── edit.yaml
-│       │       ├── kustomization.yaml
-│       │       └── view.yaml
-│       └── tasks
-│           └── base
-│               ├── git-clone.yaml
-│               ├── kustomization.yaml
-│               └── scos-build.yaml
+│   └── tekton
+│       ├── daemonsets
+│       │   └── base
+│       │       ├── kustomization.yaml
+│       │       └── kvm-dev-plg-ds.yaml
+│       ├── pipelineruns
+│       │   └── workspace-template.yaml
+│       ├── pipelines
+│       │   └── base
+│       │       ├── kustomization.yaml
+│       │       ├── pipeline-scos-all.yaml
+│       │       └── pipeline-scos-build.yaml
+│       ├── rbac
+│       │   └── base
+│       │       ├── admin.yaml
+│       │       ├── edit.yaml
+│       │       ├── kustomization.yaml
+│       │       └── view.yaml
+│       └── tasks
+│           └── base
+│               ├── kustomization.yaml
+│               ├── scos-build.yaml
+│               ├── scos-cosa-buildextend.yaml
+│               ├── scos-cosa-build.yaml
+│               ├── scos-cosa-copy.yaml
+│               ├── scos-cosa-init.yaml
+│               └── scos-cosa-test.yaml
 └── README.md
+
 ```
