@@ -1,0 +1,35 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: scos-cosa-test
+
+spec:
+  params:
+    - description: The version repo
+      name: version
+      type: string
+  steps:
+    - image: 'quay.io/coreos-assembler/coreos-assembler:latest'
+      name: scos-cosa-test
+      resources:
+        limits:
+          cpu: '1'
+          devices.kubevirt.io/kvm: '1'
+          memory: 6Gi
+        requests:
+          cpu: 500m
+          devices.kubevirt.io/kvm: '1'
+          memory: 4Gi
+      script: |
+        #!/usr/bin/env bash
+
+        set -euxo pipefail
+
+        echo $(params.version)
+
+        cd /srv/scos
+
+        cosa kola --basic-qemu-scenarios
+  workspaces:
+    - mountPath: /srv
+      name: srv

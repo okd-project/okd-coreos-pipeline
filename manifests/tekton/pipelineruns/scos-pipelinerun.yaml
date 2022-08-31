@@ -1,0 +1,25 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  namespace: okd-team
+  name: scos-pipelinerun-all
+spec:
+  params:
+  - name: version
+    value: "4.12"
+  pipelineRef:
+    name: scos-all
+  timeouts:
+    pipeline: "3h0m0s"
+    tasks: "2h0m0s"
+
+  workspaces:
+  - name: shared-workspace
+    volumeClaimTemplate:
+      spec:
+        storageClassName: ocs-external-storagecluster-ceph-rbd
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi
