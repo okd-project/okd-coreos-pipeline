@@ -1,11 +1,11 @@
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: cosa-pipeline-edit
+  name: okd-coreos-pipeline-edit
 subjects:
   - kind: Group
     apiGroup: rbac.authorization.k8s.io
-    name: cosa-pipeline-edit
+    name: okd-coreos-pipeline-edit
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole

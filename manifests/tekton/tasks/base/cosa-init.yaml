@@ -1,0 +1,90 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: cosa-init 
+spec:
+  params:
+    - description: The manifest repo URL
+      name: repo
+      type: string
+    - description: The manifest repo branch
+      name: branch
+      type: string
+    - description: The CoreOS variant
+      name: variant
+      type: string
+    - description: The OKD version
+      name: version
+      type: string
+  steps:
+    - image: 'quay.io/coreos-assembler/coreos-assembler:latest'
+      name: prepare-repo
+      resources:
+        limits:
+          devices.kubevirt.io/kvm: '1'
+          memory: 4Gi
+        requests:
+          devices.kubevirt.io/kvm: '1'
+          memory: 4Gi
+      script: |
+        #!/usr/bin/env bash 
+        set -euxo pipefail 
+
+        mkdir -p /workspace/coreos
+        cd /workspace/coreos
+
+        cat << INFO
+        Initializing coreos-assembler:
+        
+        Manifest repo:  $(params.repo)
+        Branch:         $(params.branch)
+
+        OKD version:    $(params.version)
+        CoreOS variant: $(params.variant)
+        
+        INFO
+
+        cosa init \
+            --branch "$(params.branch)" \
+            --variant "$(params.variant)" \
+            "$(params.repo)"
+
+        if [ -d "/workspace/rpms" ]; then
+          mv /workspace/rpms /workspace/coreos/
+          createrepo_c /workspace/coreos/rpms
+        fi
+
+        # TODO: Upstream to openshift/os
+        sed -i 's/rhel-9-server-ose/artifacts\n  - okd-copr/' "src/config/manifest-$(params.variant).yaml"
+
+        if [ -f "src/config/repos/c9s.repo" ]; then
+          cp -ivf src/config/repos/c9s.repo src/config/c9s.repo
+        fi
+
+        # Get oc and hypershift from the yum repo in the artifacts image
+        cat <<EOF >> src/config/c9s.repo
+
+        [artifacts]
+        name=OKD RPM artifacts
+        baseurl=file:///workspace/coreos/rpms/
+        repo_gpgcheck=0
+        gpgcheck=0
+        enabled=1
+
+        EOF
+
+        # Get cri-o and cri-tools from COPR
+        cat <<EOF >> src/config/c9s.repo
+
+        [okd-copr]
+        name=OKD COPR
+        baseurl=https://download.copr.fedorainfracloud.org/results/@OKD/okd/centos-stream-9-\$basearch/
+        gpgkey=https://download.copr.fedorainfracloud.org/results/@OKD/okd/pubkey.gpg
+        repo_gpgcheck=0
+        gpgcheck=1
+        enabled=1
+
+        EOF
+  workspaces:
+    - mountPath: /workspace
+      name: ws

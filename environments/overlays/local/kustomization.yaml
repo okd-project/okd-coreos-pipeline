@@ -3,9 +3,10 @@ kind: Kustomization
 bases:
   - ../../../manifests/tekton/rbac/base
   - ../../../manifests/tekton/tasks/base
-  - ../../../manifests/tekton/daemonsets/base
   - ../../../manifests/tekton/pipelines/base
+  # locally, we include kvm-device-plugin
+  - ../../../manifests/tekton/daemonsets/base
 resources:
   - namespace/namespace.yaml
-namespace: cosa-pipeline
+namespace: okd-coreos-pipeline
 

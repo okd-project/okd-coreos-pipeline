@@ -1,5 +1,6 @@
 bases:
-  - pipeline-scos-all.yaml
+  - okd-coreos-all.yaml
+  - okd-coreos-build.yaml
 
 
 

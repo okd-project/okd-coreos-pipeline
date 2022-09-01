@@ -1,16 +1,11 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: scos-cosa-build
-  namespace: okd-team
+  name: cosa-buildextend
 spec:
-  params:
-    - description: The version repo
-      name: version
-      type: string
   steps:
     - image: 'quay.io/coreos-assembler/coreos-assembler:latest'
-      name: fetch-and-build
+      name: buildextend
       resources:
         limits:
           devices.kubevirt.io/kvm: '1'
@@ -20,16 +15,12 @@ spec:
           memory: 4Gi
       script: |
         #!/usr/bin/env bash
-
         set -euxo pipefail
 
-        echo $(params.version)
-
-        cd /srv/scos
-
-        cosa fetch
-
-        cosa build
+        cd /workspace/coreos
+        cosa buildextend-metal4k
+        cosa buildextend-metal
+        cosa buildextend-live
   workspaces:
-    - mountPath: /srv
-      name: srv
+    - mountPath: /workspace
+      name: ws

@@ -1,0 +1,58 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: okd-coreos-build
+spec:
+  params:
+    - default: 'https://github.com/openshift/os.git'
+      name: repo
+      type: string
+    - default: 'release-4.12'
+      name: branch
+      type: string
+    - default: 'scos'
+      name: variant
+      type: string
+    - default: '4.12'
+      name: version
+      type: string
+    - default: "registry.ci.openshift.org/origin/4.12:artifacts"
+      name: rpm-artifacts-image
+      type: string
+  tasks:
+    - name: rpm-artifacts-copy
+      params:
+        - name: image
+          value: $(params.rpm-artifacts-image)
+      taskRef:
+        kind: Task
+        name: rpm-artifacts-copy
+      workspaces:
+        - name: ws
+          workspace: shared-workspace
+    - name: cosa-init
+      params:
+        - name: repo
+          value: $(params.repo)
+        - name: branch
+          value: $(params.branch)
+        - name: variant
+          value: $(params.variant)
+        - name: version
+          value: $(params.version)
+      taskRef:
+        kind: Task
+        name: cosa-init
+      workspaces:
+        - name: ws
+          workspace: shared-workspace
+    - name: cosa-build
+      taskRef:
+        kind: Task
+        name: cosa-build
+      workspaces:
+        - name: ws
+          workspace: shared-workspace
+  workspaces:
+    - name: shared-workspace
+
