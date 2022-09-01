@@ -1,43 +1,47 @@
-# Tekton Operator Build Pipeline
+# OKD CoreOS Build Pipeline
 
-## Intro
-
-All the necessary yaml files to deploy a generic tekton pipeline to build SCOS image
+All the necessary yaml files to deploy a generic tekton pipeline to build a CoreOS image using coreos-assembler.
 
 **NB** This is a WIP
 
 ## Description
 
 The list of tasks are :
-* scos-cosa-copy
-* scos-cosa-init
-* scos-cosa-build
-* scos-cosa-buildextend
-* scos-cosa-test
+* cosa-init
+* cosa-build
+* cosa-buildextend
+* cosa-test
 
-TODO :
-* future step to push the image to an S3 bucket
+The pipeline uses [kvm-device-plugin](https://github.com/cgwalters/kvm-device-plugin),
+which is now part of [KubeVirt](https://github.com/kubevirt).
 
 ## Installation
 
-### Install Tekton Operator
-
-Install the tekton cli and tekton resources before continuing (see https://tekton.dev/docs/pipelines/install)
-
-### Clone the repository
+Clone the repository:
 
 ```bash
-git clone git@github.com:okd-project/cosa-pipeline.git
+git clone https://github.com/okd-project/okd-coreos-pipeline.git
 ```
 
-### Install the operator tekton pipeline with kustomize
+* For local (Kind or other) clusters, execute the following commands:
+    ```bash
+    # assume you logged into your local cluster
 
-The pipeline is using [kvm-device-plugin](https://github.com/cgwalters/kvm-device-plugin), which is now part of [KubeVirt](https://github.com/kubevirt). 
+    # install tekton if haven't already
+    kubectl apply --filename https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
 
-The daemonset for kvm-device-plugin will be available on the OKD cluster in OperateFirst, but needs to be installed for your local clusters.
+    # the local overlay includes a device-plugin-kvm daemonset
+    kubectl apply -k environments/overlays/local
+
+    # check that all resources have deployed
+    kubectl get all -n okd-coreos-pipeline
+
+    # once all pods are in the RUNNING status create a configmap as follows
+    # this assumes you have the correct credentials and have logged into the registry to push images to
+    kubectl create configmap docker-config --from-file=/$HOME/.docker/config.json -n okd-coreos-pipeline
+    ```
 
 * For OperateFirst OKD cluster, execute the following commands
-
     ```bash
     # assume you logged into your kubernetes cluster on OperateFirst
     kubectl apply -k environments/overlays/operate-first
@@ -49,34 +53,30 @@ The daemonset for kvm-device-plugin will be available on the OKD cluster in Oper
     # this assumes you have the correct credentials and have logged into the registry to push images to
     kubectl create configmap docker-config --from-file=/$HOME/.docker/config.json -n okd-team
     ```
-* For local (Kind or other) clusters, execute the following commands:
-    ```bash
-    # assume you logged into your kubernetes cluster on OperateFirst
-    kubectl apply -k environments/overlays/local
-
-    # check that all resources have deployed
-    kubectl get all -n okd-team
-
-    # once all pods are in the RUNNING status create a configmap as follows
-    # this assumes you have the correct credentials and have logged into the registry to push images to
-    kubectl create configmap docker-config --from-file=/$HOME/.docker/config.json -n okd-team
-    ```
-
 
 ## Usage
 
-Execute the following to start a pipeline run
+Execute the following to start a pipeline run:
 
 ```bash
-kubectl apply -f manifests/tekton/pipelineruns/scos-pipelinerun.yaml -n okd-team
+kubectl create \
+    -n okd-coreos-pipeline \
+    -f environments/overlays/local/pipelineruns/okd-coreos-all-pipelinerun.yaml
+
+# see the logs
+tkn pipelinerun logs -f \
+    -n okd-coreos-pipeline \
+    okd-coreos-all-pipelinerun-fooba
 ```
 
-## Next Steps
+## TODO
 
-* Task 2: Test the image
-* Task 3: Push the image to S3
+* Test the image
+* Push the image artifacts to S3 bucket
+* Push container and extensions to quay.io
 * Control previous image, so that we build only upon need
-* Use a workspace to share the image built in first task with the other tasks
+
+The pipeline uses [kvm-device-plugin](https://github.com/cgwalters/kvm-device-plugin), which is now part of [KubeVirt](https://github.com/kubevirt).
 
 ## Folder structure
 
@@ -84,44 +84,46 @@ The folder structure is as follows :
 
 ```bash
 .
-├── environments
-│   └── overlays
-│       ├── local
-│       │   ├── kustomization.yaml
-│       │   └── namespace
-│       │       └── namespace.yaml
-│       └── operate-first
-│           └── kustomization.yaml
 ├── LICENSE
-├── manifests
-│   └── tekton
-│       ├── daemonsets
-│       │   └── base
-│       │       ├── kustomization.yaml
-│       │       └── kvm-dev-plg-ds.yaml
-│       ├── pipelineruns
-│       │   ├── scos-pipelinerun.yaml
-│       │   └── workspace-template.yaml
-│       ├── pipelines
-│       │   └── base
-│       │       ├── kustomization.yaml
-│       │       ├── pipeline-scos-all.yaml
-│       │       └── pipeline-scos-build.yaml
-│       ├── rbac
-│       │   └── base
-│       │       ├── admin.yaml
-│       │       ├── edit.yaml
-│       │       ├── kustomization.yaml
-│       │       └── view.yaml
-│       └── tasks
-│           └── base
-│               ├── kustomization.yaml
-│               ├── scos-build.yaml
-│               ├── scos-cosa-buildextend.yaml
-│               ├── scos-cosa-build.yaml
-│               ├── scos-cosa-copy.yaml
-│               ├── scos-cosa-init.yaml
-│               └── scos-cosa-test.yaml
-└── README.md
+├── README.md
+├── environments
+│   └── overlays
+│       ├── local
+│       │   ├── kustomization.yaml
+│       │   ├── namespace.yaml
+│       │   └── pipelineruns
+│       │       ├── okd-coreos-all-pipelinerun.yaml
+│       │       └── okd-coreos-build-pipelinerun.yaml
+│       └── operate-first
+│           ├── kustomization.yaml
+│           └── pipelineruns
+│               ├── okd-coreos-all-pipelinerun.yaml
+│               └── okd-coreos-build-pipelinerun-.yaml
+└── manifests
+    ├── apps
+    └── tekton
+        ├── daemonsets
+        │   └── base
+        │       ├── kustomization.yaml
+        │       └── device-plugin-kvm-daemonset.yaml
+        ├── pipelines
+        │   └── base
+        │       ├── kustomization.yaml
+        │       ├── okd-coreos-all.yaml
+        │       └── okd-coreos-build.yaml
+        ├── rbac
+        │   └── base
+        │       ├── admin.yaml
+        │       ├── edit.yaml
+        │       ├── kustomization.yaml
+        │       └── view.yaml
+        └── tasks
+            └── base
+                ├── cosa-build.yaml
+                ├── cosa-buildextend.yaml
+                ├── cosa-init.yaml
+                ├── cosa-test.yaml
+                ├── kustomization.yaml
+                └── rpm-artifacts-copy.yaml
 
 ```

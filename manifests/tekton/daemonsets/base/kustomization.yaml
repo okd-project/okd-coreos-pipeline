@@ -1,2 +1,2 @@
 bases:
-  - kvm-dev-plg-ds.yaml
+  - device-plugin-kvm-daemonset.yaml

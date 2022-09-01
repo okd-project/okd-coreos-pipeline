@@ -1,0 +1,25 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: rpm-artifacts-copy 
+spec:
+  params:
+    - description: The rpm artifact image
+      name: image
+      type: string
+  steps:
+    - image: $(params.image)
+      name: copy-rpms
+      resources: {}
+      script: |
+        #!/usr/bin/env bash
+        set -euxo pipefail
+
+        mkdir /workspace/rpms
+        cp -irvf /srv/repo/*.rpm /workspace/rpms/
+
+        useradd builder
+        chown -R builder:builder /workspace/rpms
+  workspaces:
+    - mountPath: /workspace
+      name: ws
