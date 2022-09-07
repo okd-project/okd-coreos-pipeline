@@ -2,5 +2,6 @@ bases:
   - cosa-init.yaml
   - cosa-build.yaml
   - cosa-buildextend.yaml
+  - cosa-upload-images.yaml
   - cosa-test.yaml
   - rpm-artifacts-copy.yaml

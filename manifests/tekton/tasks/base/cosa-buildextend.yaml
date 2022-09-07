@@ -21,6 +21,7 @@ spec:
         cosa buildextend-metal4k
         cosa buildextend-metal
         cosa buildextend-live
+
   workspaces:
     - mountPath: /workspace
       name: ws

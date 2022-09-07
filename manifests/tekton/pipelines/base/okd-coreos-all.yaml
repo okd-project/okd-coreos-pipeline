@@ -19,6 +19,21 @@ spec:
     - default: "registry.ci.openshift.org/origin/4.12:artifacts"
       name: rpm-artifacts-image
       type: string
+    - name: target-registry
+      default: "quay.io/okd"
+      type: string
+    - name: baseos-container-image-name
+      default: "centos-stream-coreos-9"
+      type: string
+    - name: baseos-container-image-tag
+      default: devel
+      type: string
+    - name: extensions-container-image-name
+      default: "centos-stream-coreos-9-extensions"
+      type: string
+    - name: extensions-container-image-tag
+      default: devel
+      type: string
   tasks:
     - name: rpm-artifacts-copy
       params:
@@ -66,9 +81,29 @@ spec:
       workspaces:
         - name: ws
           workspace: shared-workspace
-    - name: cosa-buildextend
+    - name: cosa-upload-images
       runAfter:
         - cosa-test
+      taskRef:
+        kind: Task
+        name: cosa-upload-images
+      params:
+        - name: target-registry
+          value: $(params.target-registry)
+        - name: baseos-container-image-name
+          value: $(params.baseos-container-image-name)
+        - name: baseos-container-image-tag
+          value: $(params.baseos-container-image-tag)
+        - name: extensions-container-image-name
+          value: $(params.extensions-container-image-name)
+        - name: extensions-container-image-tag
+          value: $(params.extensions-container-image-tag)
+      workspaces:
+        - name: ws
+          workspace: shared-workspace
+    - name: cosa-buildextend
+      runAfter:
+        - cosa-upload-images
       taskRef:
         kind: Task
         name: cosa-buildextend

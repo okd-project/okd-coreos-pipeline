@@ -49,17 +49,20 @@ spec:
             --variant "$(params.variant)" \
             "$(params.repo)"
 
+        # Update symlinks for default manifests
+        cosa update-variant default scos
+
+        # Move rpms into scope of COSA VM
         if [ -d "/workspace/rpms" ]; then
           mv /workspace/rpms /workspace/coreos/
           createrepo_c /workspace/coreos/rpms
         fi
 
         # TODO: Upstream to openshift/os
-        sed -i 's/rhel-9-server-ose/artifacts\n  - okd-copr/' "src/config/manifest-$(params.variant).yaml"
+        sed -i 's/rhel-9-server-ose/artifacts/' "src/config/manifest-$(params.variant).yaml"
 
-        if [ -f "src/config/repos/c9s.repo" ]; then
-          cp -ivf src/config/repos/c9s.repo src/config/c9s.repo
-        fi
+        # https://github.com/openshift/os/pull/1006
+        sed -i 's|file:///usr/share/distribution-gpg-keys/centos|https://www.centos.org/keys|g' "src/config/c9s.repo"
 
         # Get oc and hypershift from the yum repo in the artifacts image
         cat <<EOF >> src/config/c9s.repo
@@ -73,18 +76,6 @@ spec:
 
         EOF
 
-        # Get cri-o and cri-tools from COPR
-        cat <<EOF >> src/config/c9s.repo
-
-        [okd-copr]
-        name=OKD COPR
-        baseurl=https://download.copr.fedorainfracloud.org/results/@OKD/okd/centos-stream-9-\$basearch/
-        gpgkey=https://download.copr.fedorainfracloud.org/results/@OKD/okd/pubkey.gpg
-        repo_gpgcheck=0
-        gpgcheck=1
-        enabled=1
-
-        EOF
   workspaces:
     - mountPath: /workspace
       name: ws
