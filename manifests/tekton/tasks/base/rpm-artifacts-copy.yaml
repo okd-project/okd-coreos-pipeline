@@ -4,7 +4,7 @@ metadata:
   name: rpm-artifacts-copy 
 spec:
   params:
-    - description: The rpm artifact image
+    - description: The rpm artifacts image
       name: image
       type: string
   steps:
@@ -20,6 +20,7 @@ spec:
 
         useradd builder
         chown -R builder:builder /workspace/rpms
+
   workspaces:
     - mountPath: /workspace
       name: ws

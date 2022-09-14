@@ -2,7 +2,6 @@ apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: cosa-test
-
 spec:
   steps:
     - image: 'quay.io/coreos-assembler/coreos-assembler:latest'
@@ -21,6 +20,7 @@ spec:
         cd /workspace/coreos
         cosa buildextend-qemu
         cosa kola --basic-qemu-scenarios
+
   workspaces:
     - mountPath: /workspace
       name: ws

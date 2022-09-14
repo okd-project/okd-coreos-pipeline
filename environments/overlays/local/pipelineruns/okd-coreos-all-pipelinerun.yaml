@@ -3,6 +3,7 @@ kind: PipelineRun
 metadata:
   generateName: okd-coreos-all-pipelinerun-
 spec:
+  serviceAccountName: cosa-build-bot
   params:
     - name: repo
       value: "https://github.com/openshift/os.git"
@@ -14,6 +15,16 @@ spec:
       value: "4.12"
     - name: rpm-artifacts-image
       value: "registry.ci.openshift.org/origin/4.12:artifacts"
+    - name: target-registry
+      value: "quay.io/okd"
+    - name: baseos-container-image-name
+      value: "centos-stream-coreos-9"
+    - name: baseos-container-image-tag
+      value: devel
+    - name: extensions-container-image-name
+      value: "centos-stream-coreos-9-extensions"
+    - name: extensions-container-image-tag
+      value: devel
   pipelineRef:
     name: okd-coreos-all
   timeouts:

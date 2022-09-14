@@ -11,6 +11,8 @@ The list of tasks are :
 * cosa-build
 * cosa-buildextend
 * cosa-test
+* cosa-upload-images
+* rpm-artifacts-copy
 
 The pipeline uses [kvm-device-plugin](https://github.com/cgwalters/kvm-device-plugin),
 which is now part of [KubeVirt](https://github.com/kubevirt).
@@ -35,23 +37,44 @@ git clone https://github.com/okd-project/okd-coreos-pipeline.git
 
     # check that all resources have deployed
     kubectl get all -n okd-coreos-pipeline
-
-    # once all pods are in the RUNNING status create a configmap as follows
-    # this assumes you have the correct credentials and have logged into the registry to push images to
-    kubectl create configmap docker-config --from-file=/$HOME/.docker/config.json -n okd-coreos-pipeline
     ```
 
-* For OperateFirst OKD cluster, execute the following commands
+    Once all pods are in the RUNNING status create a secret that will allow you to push to the selected
+    registry (pipelineRun parameter target-repository), as in the example below:
+
+    Sample secret file:
+
+    ```yaml
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: okd-okd-robot-pull-secret
+    data:
+      .dockerconfigjson: ewo...p9
+    type: kubernetes.io/dockerconfigjson
+    ```
+
+    Use this command to create the secret:
+    ```bash
+    kubectl apply -f ./my-secret.yaml -n okd-coreos-pipeline
+    ```
+
+
+* OKD team members may do the following for deploying to the OperateFirst by executing the following commands:
     ```bash
     # assume you logged into your kubernetes cluster on OperateFirst
     kubectl apply -k environments/overlays/operate-first
 
     # check that all resources have deployed
     kubectl get all -n okd-team
-
-    # once all pods are in the RUNNING status create a configmap as follows
-    # this assumes you have the correct credentials and have logged into the registry to push images to
-    kubectl create configmap docker-config --from-file=/$HOME/.docker/config.json -n okd-team
+    ```
+    Once all pods are in the RUNNING status create a secret  as follows
+    - Navigate to https://quay.io/organization/okd?tab=robots 
+    - click on the robot account name `okd+okd_robot`. - A pop-up will appear from which you can download `okd-okd-robot-secret.yml` file
+    
+    Then proceed to create the secret in the `okd-team` namespace:
+    ```bash
+    kubectl apply -f ./okd-okd-robot-secret.yml -n okd-team
     ```
 
 ## Usage
@@ -71,12 +94,9 @@ tkn pipelinerun logs -f \
 
 ## TODO
 
-* Test the image
 * Push the image artifacts to S3 bucket
-* Push container and extensions to quay.io
-* Control previous image, so that we build only upon need
-
-The pipeline uses [kvm-device-plugin](https://github.com/cgwalters/kvm-device-plugin), which is now part of [KubeVirt](https://github.com/kubevirt).
+* Build and test images for more platforms
+* Control the previous build, so that we build when needed
 
 ## Folder structure
 
@@ -90,7 +110,8 @@ The folder structure is as follows :
 │   └── overlays
 │       ├── local
 │       │   ├── kustomization.yaml
-│       │   ├── namespace.yaml
+│       │   ├── namespace
+│       │   │   └── namespace.yaml
 │       │   └── pipelineruns
 │       │       ├── okd-coreos-all-pipelinerun.yaml
 │       │       └── okd-coreos-build-pipelinerun.yaml
@@ -98,14 +119,13 @@ The folder structure is as follows :
 │           ├── kustomization.yaml
 │           └── pipelineruns
 │               ├── okd-coreos-all-pipelinerun.yaml
-│               └── okd-coreos-build-pipelinerun-.yaml
+│               └── okd-coreos-build-pipelinerun.yaml
 └── manifests
-    ├── apps
     └── tekton
         ├── daemonsets
         │   └── base
-        │       ├── kustomization.yaml
-        │       └── device-plugin-kvm-daemonset.yaml
+        │       ├── device-plugin-kvm-daemonset.yaml
+        │       └── kustomization.yaml
         ├── pipelines
         │   └── base
         │       ├── kustomization.yaml
@@ -117,12 +137,17 @@ The folder structure is as follows :
         │       ├── edit.yaml
         │       ├── kustomization.yaml
         │       └── view.yaml
+        ├── serviceaccounts
+        │   └── base
+        │       ├── cosa-build-bot.yaml
+        │       └── kustomization.yaml
         └── tasks
             └── base
                 ├── cosa-build.yaml
                 ├── cosa-buildextend.yaml
                 ├── cosa-init.yaml
                 ├── cosa-test.yaml
+                ├── cosa-upload-images.yaml
                 ├── kustomization.yaml
                 └── rpm-artifacts-copy.yaml
 
