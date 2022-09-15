@@ -18,9 +18,6 @@ spec:
         mkdir /workspace/rpms
         cp -irvf /srv/repo/*.rpm /workspace/rpms/
 
-        useradd builder
-        chown -R builder:builder /workspace/rpms
-
   workspaces:
     - mountPath: /workspace
       name: ws

@@ -31,6 +31,8 @@ spec:
         - name: ws
           workspace: shared-workspace
     - name: cosa-init
+      runAfter:
+      - rpm-artifacts-copy
       params:
         - name: repo
           value: $(params.repo)
@@ -47,6 +49,8 @@ spec:
         - name: ws
           workspace: shared-workspace
     - name: cosa-build
+      runAfter:
+      - cosa-init
       taskRef:
         kind: Task
         name: cosa-build
