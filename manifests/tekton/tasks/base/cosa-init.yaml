@@ -45,12 +45,12 @@ spec:
         INFO
 
         cosa init \
-            --branch "$(params.branch)" \
-            --variant "$(params.variant)" \
-            "$(params.repo)"
+            --branch $(params.branch) \
+            --variant $(params.variant) \
+            $(params.repo)
 
         # Update symlinks for default manifests
-        cosa update-variant default scos
+        cosa update-variant default $(params.variant)
 
         # Move rpms into scope of COSA VM
         if [ -d "/workspace/rpms" ]; then
@@ -59,10 +59,10 @@ spec:
         fi
 
         # TODO: Upstream to openshift/os
-        sed -i 's/rhel-9-server-ose/artifacts/' "src/config/manifest-$(params.variant).yaml"
+        sed -i 's/rhel-9-server-ose/artifacts/' $(readlink -f src/config/manifest.yaml)
 
         # https://github.com/openshift/os/pull/1006
-        sed -i 's|file:///usr/share/distribution-gpg-keys/centos|https://www.centos.org/keys|g' "src/config/c9s.repo"
+        sed -i 's|file:///usr/share/distribution-gpg-keys/centos|https://www.centos.org/keys|g' src/config/c9s.repo
 
         # Get oc and hypershift from the yum repo in the artifacts image
         cat <<EOF >> src/config/c9s.repo
