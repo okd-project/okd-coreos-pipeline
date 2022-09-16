@@ -20,14 +20,15 @@ spec:
         cd /workspace/coreos
         cosa fetch
         cosa build ostree
-        
+
         # The rpms that were extracted from the artifacts image
         # are not present inside the container used to build the
         # extensions, however `rpm-ostree compose extensions`
         # will try to fetch metadata for all repos listed in
-        # {manifest,extensions}.yaml 
+        # both {manifest,extensions}.yaml 
         # TODO: Find a more elegant way to do this
-        sed -i 's/- artifacts//' "src/config/manifest.yaml"
+        sed -i 's/- artifacts//' $(readlink -f src/config/manifest.yaml)
+
         cosa build-extensions-container
 
   workspaces:
