@@ -17,6 +17,8 @@ spec:
 
         mkdir /workspace/rpms
         cp -irvf /srv/repo/*.rpm /workspace/rpms/
+        chmod 0777 /workspace/rpms/
+        chmod 0666 /workspace/rpms/*.rpm
 
   workspaces:
     - mountPath: /workspace
