@@ -27,6 +27,12 @@ spec:
       value: devel
   pipelineRef:
     name: okd-coreos-all
+  taskRunSpecs:
+    - pipelineTaskName: cosa-build
+      computeResources:
+        requests:
+          cpu: 2
+          memory: 4Gi
   timeouts:
     pipeline: "3h0m0s"
     tasks: "2h0m0s"

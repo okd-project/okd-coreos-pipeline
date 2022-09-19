@@ -16,6 +16,12 @@ spec:
       value: "registry.ci.openshift.org/origin/4.12:artifacts"
   pipelineRef:
     name: okd-coreos-build
+  taskRunSpecs:
+    - pipelineTaskName: cosa-build
+      computeResources:
+        requests:
+          cpu: 2
+          memory: 4Gi
   workspaces:
     - name: shared-workspace
       volumeClaimTemplate:
