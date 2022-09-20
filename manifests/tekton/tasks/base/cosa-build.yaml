@@ -31,7 +31,7 @@ spec:
         # TODO: Find a more elegant way to do this
         sed -i 's/- artifacts//' $(readlink -f src/config/manifest.yaml)
 
-        sed -i 's|RUN rpm-ostree compose extensions --rootfs=/ --output-dir=/usr/share/rpm-ostree/extensions/ {manifest,extensions}.yaml|RUN ls -al \&\& cat c9s.repo \&\& rpm-ostree compose extensions --rootfs=/ --output-dir=/usr/share/rpm-ostree/extensions/ {manifest,extensions}.yaml|' src/config/extensions/Dockerfile
+        sed -i 's|RUN rpm-ostree compose extensions --rootfs=/ --output-dir=/usr/share/rpm-ostree/extensions/ {manifest,extensions}.yaml|RUN stat -f . \&\& ls -al \&\& cat c9s.repo \&\& rpm-ostree compose extensions --rootfs=/ --output-dir=/usr/share/rpm-ostree/extensions/ {manifest,extensions}.yaml|' src/config/extensions/Dockerfile
 
         cosa build-extensions-container
 
