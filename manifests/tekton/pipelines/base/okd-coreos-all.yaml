@@ -88,6 +88,8 @@ spec:
           value: $(params.baseos-container-image-name)
         - name: image
           value: ostree
+        - name: tag
+          value: $(params.version)
       workspaces:
         - name: regcred
           workspace: registry-credentials
@@ -115,6 +117,8 @@ spec:
           value: $(params.extensions-container-image-name)
         - name: image
           value: extensions-container
+        - name: tag
+          value: $(params.version)
       workspaces:
         - name: regcred
           workspace: registry-credentials
