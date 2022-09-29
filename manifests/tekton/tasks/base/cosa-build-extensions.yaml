@@ -6,6 +6,7 @@ spec:
   steps:
     - image: 'quay.io/coreos-assembler/coreos-assembler:latest'
       name: build-extensions-container
+      onError: continue
       resources:
         limits:
           devices.kubevirt.io/kvm: '1'
