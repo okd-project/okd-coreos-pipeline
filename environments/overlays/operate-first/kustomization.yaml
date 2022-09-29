@@ -4,5 +4,4 @@ bases:
   - ../../../manifests/tekton/rbac/base
   - ../../../manifests/tekton/tasks/base
   - ../../../manifests/tekton/pipelines/base
-  - ../../../manifests/tekton/serviceaccounts/base
 namespace: okd-team

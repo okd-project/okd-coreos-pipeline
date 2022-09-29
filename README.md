@@ -79,7 +79,7 @@ git clone https://github.com/okd-project/okd-coreos-pipeline.git
 
 ## Usage
 
-Execute the following to start a pipeline run:
+Execute the following to start a pipelinerun locally:
 
 ```bash
 kubectl create \
@@ -89,6 +89,18 @@ kubectl create \
 # see the logs
 tkn pipelinerun logs -f \
     -n okd-coreos-pipeline \
+    okd-coreos-all-pipelinerun-fooba
+```
+
+On OperateFirst, run:
+```bash
+kubectl create \
+    -n okd-team \
+    -f environments/overlays/operate-first/pipelineruns/okd-coreos-all-pipelinerun.yaml
+
+# see the logs
+tkn pipelinerun logs -f \
+    -n okd-team \
     okd-coreos-all-pipelinerun-fooba
 ```
 
@@ -137,17 +149,15 @@ The folder structure is as follows :
         │       ├── edit.yaml
         │       ├── kustomization.yaml
         │       └── view.yaml
-        ├── serviceaccounts
-        │   └── base
-        │       ├── cosa-build-bot.yaml
-        │       └── kustomization.yaml
         └── tasks
             └── base
-                ├── cosa-build.yaml
+                ├── cosa-build-baseos.yaml
+                ├── cosa-build-extensions.yaml
                 ├── cosa-buildextend.yaml
                 ├── cosa-init.yaml
                 ├── cosa-test.yaml
-                ├── cosa-upload-images.yaml
+                ├── cosa-upload-baseos.yaml
+                ├── cosa-upload-extensions.yaml
                 ├── kustomization.yaml
                 └── rpm-artifacts-copy.yaml
 
