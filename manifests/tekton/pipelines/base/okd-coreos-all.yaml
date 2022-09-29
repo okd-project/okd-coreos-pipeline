@@ -80,12 +80,16 @@ spec:
         - cosa-test
       taskRef:
         kind: Task
-        name: cosa-upload-baseos
+        name: cosa-upload
       params:
         - name: target-registry
           value: $(params.target-registry)
-        - name: baseos-container-image-name
+        - name: container-image-name
           value: $(params.baseos-container-image-name)
+        - name: image
+          value: ostree
+        - name: tag
+          value: $(params.version)
       workspaces:
         - name: regcred
           workspace: registry-credentials
@@ -105,12 +109,16 @@ spec:
         - cosa-build-extensions
       taskRef:
         kind: Task
-        name: cosa-upload-extensions
+        name: cosa-upload
       params:
         - name: target-registry
           value: $(params.target-registry)
-        - name: extensions-container-image-name
+        - name: container-image-name
           value: $(params.extensions-container-image-name)
+        - name: image
+          value: extensions-container
+        - name: tag
+          value: $(params.version)
       workspaces:
         - name: regcred
           workspace: registry-credentials
