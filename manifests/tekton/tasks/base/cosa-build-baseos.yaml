@@ -1,11 +1,11 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: cosa-build
+  name: cosa-build-baseos
 spec:
   steps:
     - image: 'quay.io/coreos-assembler/coreos-assembler:latest'
-      name: fetch-and-build
+      name: fetch-and-build-baseos
       resources:
         limits:
           devices.kubevirt.io/kvm: '1'
@@ -18,18 +18,9 @@ spec:
         set -euxo pipefail
 
         cd /workspace/coreos
+
         cosa fetch
         cosa build ostree
-
-        # The rpms that were extracted from the artifacts image
-        # are not present inside the container used to build the
-        # extensions, however `rpm-ostree compose extensions`
-        # will try to fetch metadata for all repos listed in
-        # both {manifest,extensions}.yaml 
-        # TODO: Find a more elegant way to do this
-        sed -i 's/- artifacts//' $(readlink -f src/config/manifest.yaml)
-
-        cosa build-extensions-container
 
   workspaces:
     - mountPath: /workspace

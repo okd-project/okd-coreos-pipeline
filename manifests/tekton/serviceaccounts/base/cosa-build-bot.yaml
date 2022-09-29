@@ -1,6 +1,0 @@
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: cosa-build-bot
-secrets:
-  - name: okd-okd-robot-pull-secret

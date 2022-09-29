@@ -4,7 +4,6 @@ bases:
   - ../../../manifests/tekton/rbac/base
   - ../../../manifests/tekton/tasks/base
   - ../../../manifests/tekton/pipelines/base
-  - ../../../manifests/tekton/serviceaccounts/base
   # locally, we include kvm-device-plugin
   - ../../../manifests/tekton/daemonsets/base
 resources:
