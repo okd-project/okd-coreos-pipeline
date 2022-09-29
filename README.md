@@ -156,8 +156,7 @@ The folder structure is as follows :
                 ├── cosa-buildextend.yaml
                 ├── cosa-init.yaml
                 ├── cosa-test.yaml
-                ├── cosa-upload-baseos.yaml
-                ├── cosa-upload-extensions.yaml
+                ├── cosa-upload.yaml
                 ├── kustomization.yaml
                 └── rpm-artifacts-copy.yaml
 
