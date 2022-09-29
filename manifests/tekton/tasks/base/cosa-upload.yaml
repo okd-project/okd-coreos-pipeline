@@ -1,24 +1,27 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: cosa-upload-extensions
+  name: cosa-upload
 spec:
   params:
     - name: target-registry
       default: "quay.io/okd"
       type: string
-    - name: extensions-container-image-name
-      default: "centos-stream-coreos-9-extensions"
+    - name: container-image-name
+      default: "centos-stream-coreos-9"
+      type: string
+    - name: image
+      default: "ostree"
       type: string
   steps:
     - image: 'quay.io/coreos-assembler/coreos-assembler:latest'
-      name: upload-extensions-image
+      name: upload-image
       script: |
         #!/usr/bin/env bash
         set -euxo pipefail
 
         cd /workspace/coreos
-        cosa push-container --authfile=/registry-credentials/.dockerconfigjson --image=extensions-container $(params.target-registry)/$(params.extensions-container-image-name)
+        cosa push-container --authfile=/registry-credentials/.dockerconfigjson --image=$(params.image) $(params.target-registry)/$(params.container-image-name)
 
   workspaces:
     - mountPath: /registry-credentials
