@@ -97,7 +97,7 @@ spec:
           workspace: shared-workspace
     - name: cosa-build-extensions
       runAfter:
-        - cosa-upload-baseos
+        - cosa-test
       taskRef:
         kind: Task
         name: cosa-build-extensions
@@ -126,7 +126,7 @@ spec:
           workspace: shared-workspace
     - name: cosa-buildextend
       runAfter:
-        - cosa-upload-extensions
+        - cosa-test
       taskRef:
         kind: Task
         name: cosa-buildextend
