@@ -2,6 +2,11 @@ apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
   generateName: okd-coreos-all-pipelinerun-
+  annotations:
+    operator.tekton.dev/prune.skip: "false"
+    operator.tekton.dev/prune.resources: "taskrun, pipelinerun"
+    operator.tekton.dev/prune.keep: "1"
+    operator.tekton.dev/prune.strategy: "keep"
 spec:
   params:
     - name: repo
