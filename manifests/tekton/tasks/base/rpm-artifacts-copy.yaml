@@ -10,7 +10,13 @@ spec:
   steps:
     - image: $(params.image)
       name: copy-rpms
-      resources: {}
+      resources:
+        limits:
+          cpu: 500m
+          memory: 1Gi
+        requests:
+          cpu: 500m
+          memory: 1Gi
       script: |
         #!/usr/bin/env bash
         set -euxo pipefail

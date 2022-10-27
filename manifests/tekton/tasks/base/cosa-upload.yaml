@@ -19,6 +19,14 @@ spec:
   steps:
     - image: 'quay.io/coreos-assembler/coreos-assembler:latest'
       name: upload-image
+      resources:
+        limits:
+          cpu: 500m
+          memory: 2Gi
+        requests:
+          devices.kubevirt.io/kvm: '1'
+          cpu: 500m
+          memory: 2Gi
       onError: continue
       script: |
         #!/usr/bin/env bash

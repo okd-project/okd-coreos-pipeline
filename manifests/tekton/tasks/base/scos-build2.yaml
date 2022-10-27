@@ -1,0 +1,58 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: scos-build 
+spec:
+  params:
+  - name: version
+    description: The version repo
+    type: string
+  steps: 
+  - name: copy-okd-rpms
+    image: registry.ci.openshift.org/origin/4.12:artifacts
+    script: |
+      #!/usr/bin/env bash 
+      set -euxo pipefail
+      mkdir /workdir/okd-rpms
+      cp /srv/repo/openshift-{clients-0.0.1-*,hyperkube-*}.x86_64.rpm /workdir/okd-rpms
+    volumeMounts:
+    - name: workdir
+      mountPath: /workdir
+  - name: assemble
+    image: quay.io/coreos-assembler/coreos-assembler:latest
+    resources:
+      requests:
+        # Today COSA hardcodes 2048 for launching VMs.  We could
+        # probably shrink that in the future.
+        memory: "3Gi"
+        devices.kubevirt.io/kvm: "1"
+      limits:
+        memory: "3Gi"
+        devices.kubevirt.io/kvm: "1"
+    script: |
+      #!/usr/bin/env bash
+      set -euxo pipefail
+      echo $(params.version)
+      mkdir -p scos
+      cd scos
+      cosa init https://github.com/openshift/os.git
+      ln -snf "manifest-c9s.yaml" "src/config/manifest.yaml"
+      ln -snf "extensions-c9s.yaml" "src/config/extensions.yaml"
+      ln -snf "image-c9s.yaml" "src/config/image.yaml"
+      cp "src/config/repos/c9s.repo" "src/config/c9s.repo"
+      echo -e "[okd-rpms]\nname=OKD RPMs\nbaseurl=file:///workdir/okd-rpms\ntype=rpm-md\nrepo_gpgcheck=0\ngpgcheck=0\nenabled=1\n" >> "src/config/c9s.repo"
+      echo -e "[okd-copr]\nname=OKD COPR\nbaseurl=https://download.copr.fedorainfracloud.org/results/@OKD/okd/centos-stream-9-\$basearch/\ntype=rpm-md\ngpgcheck=1\ngpgkey=https://download.copr.fedorainfracloud.org/results/@OKD/okd/pubkey.gpg\nrepo_gpgcheck=0\nenabled=1\n" >> "src/config/c9s.repo"
+      sed -i 's/rhel-9-server-ose/okd-rpms\n  - okd-copr/' "src/config/manifest.yaml"
+      createrepo /workdir/okd-rpms
+      cosa fetch
+      cosa build
+      cosa buildextend-metal4k
+      cosa buildextend-metal
+      cosa buildextend-live
+      cosa kola --basic-qemu-scenarios
+    volumeMounts:
+    - name: workdir
+      mountPath: /workdir
+  volumes:
+  - name: workdir
+    emptyDir: {}

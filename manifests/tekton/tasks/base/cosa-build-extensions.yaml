@@ -10,9 +10,11 @@ spec:
       resources:
         limits:
           devices.kubevirt.io/kvm: '1'
+          cpu: 1000m
           memory: 4Gi
         requests:
           devices.kubevirt.io/kvm: '1'
+          cpu: 1000m
           memory: 4Gi
       script: |
         #!/usr/bin/env bash

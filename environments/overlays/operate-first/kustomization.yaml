@@ -4,4 +4,25 @@ bases:
   - ../../../manifests/tekton/rbac/base
   - ../../../manifests/tekton/tasks/base
   - ../../../manifests/tekton/pipelines/base
+  - ../../../manifests/tekton/triggers/base
 namespace: okd-team
+
+patchesJson6902:
+- path: patches/set_event_listener_url.yaml
+  target:
+    group: batch
+    kind: CronJob
+    name:  daily-job
+    version: v1
+- path: patches/set_service_account_evt_lstnr.yaml
+  target:
+    group: triggers.tekton.dev
+    kind: EventListener
+    name:  cron-listener
+    version: v1beta1
+- path: patches/set_service_account_trg_template.yaml
+  target:
+    group: triggers.tekton.dev
+    kind: TriggerTemplate
+    name:  pipeline-template
+    version: v1beta1
