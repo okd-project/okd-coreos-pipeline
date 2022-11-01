@@ -76,9 +76,6 @@ spec:
 
         EOF
 
-        # Pin kernel
-        sed -i "s/- kernel/- kernel-5.14.0-168.el9.x86_64/" src/config/manifest-c9s.yaml
-
   workspaces:
     - mountPath: /workspace
       name: ws
