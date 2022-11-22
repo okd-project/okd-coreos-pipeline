@@ -33,7 +33,7 @@ spec:
   workspaces:
     - name: registry-credentials
       secret:
-        secretName: okd-okd-robot-pull-secret
+        secretName: my-secret
     - name: shared-workspace
       volumeClaimTemplate:
         spec:

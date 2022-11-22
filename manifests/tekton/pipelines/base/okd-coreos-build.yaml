@@ -57,5 +57,14 @@ spec:
       workspaces:
         - name: ws
           workspace: shared-workspace
+    - name: cosa-build-extensions
+      runAfter:
+        - cosa-build-baseos
+      taskRef:
+        kind: Task
+        name: cosa-build-extensions
+      workspaces:
+        - name: ws
+          workspace: shared-workspace
   workspaces:
     - name: shared-workspace

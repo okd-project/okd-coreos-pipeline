@@ -48,7 +48,7 @@ git clone https://github.com/okd-project/okd-coreos-pipeline.git
     apiVersion: v1
     kind: Secret
     metadata:
-      name: okd-okd-robot-pull-secret
+      name: my-secret
     data:
       .dockerconfigjson: ewo...p9
     type: kubernetes.io/dockerconfigjson
@@ -67,14 +67,6 @@ git clone https://github.com/okd-project/okd-coreos-pipeline.git
 
     # check that all resources have deployed
     kubectl get all -n okd-team
-    ```
-    Once all pods are in the RUNNING status create a secret  as follows
-    - Navigate to https://quay.io/organization/okd?tab=robots 
-    - click on the robot account name `okd+okd_robot`. - A pop-up will appear from which you can download `okd-okd-robot-secret.yml` file
-    
-    Then proceed to create the secret in the `okd-team` namespace:
-    ```bash
-    kubectl apply -f ./okd-okd-robot-secret.yml -n okd-team
     ```
 
 ## Usage

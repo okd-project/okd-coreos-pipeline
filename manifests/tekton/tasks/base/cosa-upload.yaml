@@ -5,13 +5,13 @@ metadata:
 spec:
   params:
     - name: target-registry
-      default: "quay.io/okd"
+      default: quay.io/okd
       type: string
     - name: container-image-name
-      default: "centos-stream-coreos-9"
+      default: centos-stream-coreos-9
       type: string
     - name: image
-      default: "ostree"
+      default: ostree
       type: string
     - name: tag
       default: "4.12"
@@ -20,6 +20,7 @@ spec:
     - image: 'quay.io/coreos-assembler/coreos-assembler:latest'
       name: upload-image
       onError: continue
+      resources: {}
       script: |
         #!/usr/bin/env bash
         set -euxo pipefail
