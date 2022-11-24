@@ -8,9 +8,11 @@ spec:
       name: fetch-and-build-baseos
       resources:
         limits:
+          cpu: 1000m
           devices.kubevirt.io/kvm: '1'
           memory: 4Gi
         requests:
+          cpu: 1000m
           devices.kubevirt.io/kvm: '1'
           memory: 4Gi
       script: |
