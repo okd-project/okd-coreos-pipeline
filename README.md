@@ -73,6 +73,12 @@ git clone https://github.com/okd-project/okd-coreos-pipeline.git
 
 Execute the following to start a pipelinerun locally:
 
+Change the ${VERSION} values in the relevant file (okd-coreos-all-pipelinerun.yaml or okd-coreos-build-pipelinerun.yaml) 
+
+Alternatively there is a utility script that you can use (execute-pipelinerun.sh)
+
+This allows the pipelinerun to execute using specific versions of openshift . It mitigates the need for adding various pipelinerun versioned files to this repo
+
 ```bash
 kubectl create \
     -n okd-coreos-pipeline \
