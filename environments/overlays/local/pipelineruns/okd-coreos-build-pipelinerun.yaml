@@ -7,6 +7,7 @@ metadata:
     operator.tekton.dev/prune.resources: "taskrun, pipelinerun"
     operator.tekton.dev/prune.keep: "1"
     operator.tekton.dev/prune.strategy: "keep"
+  name: okd-coreos-build-pipelinerun
 spec:
   params:
     - name: repo
@@ -16,9 +17,9 @@ spec:
     - name: variant
       value: "scos"     
     - name: version
-      value: "4.12"
+      value: "${VERSION}"
     - name: rpm-artifacts-image
-      value: "registry.ci.openshift.org/origin/4.12:artifacts"
+      value: "registry.ci.openshift.org/origin/${VERSION}:artifacts"
   pipelineRef:
     name: okd-coreos-build
   workspaces:
