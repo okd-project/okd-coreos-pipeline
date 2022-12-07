@@ -16,6 +16,9 @@ spec:
     - name: tag
       default: "4.12"
       type: string
+    - name: tag-latest
+      default: false
+      type: string
   steps:
     - image: 'quay.io/coreos-assembler/coreos-assembler:latest'
       name: upload-image
@@ -26,8 +29,10 @@ spec:
         set -euxo pipefail
 
         cd /workspace/coreos
-        cosa push-container --authfile=/registry-credentials/.dockerconfigjson --image=$(params.image) $(params.target-registry)/$(params.container-image-name)
         cosa push-container --authfile=/registry-credentials/.dockerconfigjson --image=$(params.image) $(params.target-registry)/$(params.container-image-name):$(params.tag)-$(uname -m)
+        if [[ "$(params.tag-latest)" == "true" ]]; then
+          cosa push-container --authfile=/registry-credentials/.dockerconfigjson --image=$(params.image) $(params.target-registry)/$(params.container-image-name)
+        fi
 
   workspaces:
     - mountPath: /registry-credentials

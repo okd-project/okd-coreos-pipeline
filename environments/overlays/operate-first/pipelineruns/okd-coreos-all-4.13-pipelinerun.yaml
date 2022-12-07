@@ -25,6 +25,8 @@ spec:
       value: "centos-stream-coreos-9"
     - name: extensions-container-image-name
       value: "centos-stream-coreos-9-extensions"
+    - name: tag-latest
+      value: "false"
   pipelineRef:
     name: okd-coreos-all
   timeouts:
