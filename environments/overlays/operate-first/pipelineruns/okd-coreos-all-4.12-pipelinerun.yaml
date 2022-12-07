@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  generateName: okd-coreos-build-pipelinerun-
+  generateName: okd-coreos-all-4.12-pipelinerun-
   annotations:
     operator.tekton.dev/prune.skip: "false"
     operator.tekton.dev/prune.resources: "taskrun, pipelinerun"
@@ -19,9 +19,21 @@ spec:
       value: "4.12"
     - name: rpm-artifacts-image
       value: "registry.ci.openshift.org/origin/4.12:artifacts"
+    - name: target-registry
+      value: "quay.io/okd"
+    - name: baseos-container-image-name
+      value: "centos-stream-coreos-9"
+    - name: extensions-container-image-name
+      value: "centos-stream-coreos-9-extensions"
   pipelineRef:
-    name: okd-coreos-build
+    name: okd-coreos-all
+  timeouts:
+    pipeline: "4h0m0s"
+    tasks: "1h30m0s"
   workspaces:
+    - name: registry-credentials
+      secret:
+        secretName: okd-scos-robot-pull-secret
     - name: shared-workspace
       volumeClaimTemplate:
         spec:
@@ -30,4 +42,4 @@ spec:
           - ReadWriteOnce
           resources:
             requests:
-              storage: 20Gi
+              storage: 40Gi
