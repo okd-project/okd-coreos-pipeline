@@ -59,7 +59,7 @@ spec:
         fi
 
         # TODO: Upstream to openshift/os
-        sed -i 's/rhel-9-server-ose/artifacts/' $(readlink -f src/config/manifest.yaml)
+        sed -i 's/rhel-9.*-server-ose.*/artifacts/' $(readlink -f src/config/manifest.yaml)
 
         # https://github.com/openshift/os/pull/1006
         sed -i 's|file:///usr/share/distribution-gpg-keys/centos|https://www.centos.org/keys|g' src/config/c9s.repo
