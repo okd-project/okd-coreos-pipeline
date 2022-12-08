@@ -1,0 +1,91 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: pipeline-template
+spec:
+  params:
+  - name: repo
+    default: "https://github.com/openshift/os.git"
+  - name: branch
+    default: "master"
+  - name: variant
+    default: "scos"     
+  - name: version
+    default: "4.12"
+  - name: rpm-artifacts-image
+    default: "registry.ci.openshift.org/origin/4.12:artifacts"
+  - name: target-registry
+    default: "quay.io/okd"
+  - name: baseos-container-image-name
+    default: "centos-stream-coreos-9"
+  - name: baseos-container-image-tag
+    default: devel
+  - name: extensions-container-image-name
+    default: "centos-stream-coreos-9-extensions"
+  - name: extensions-container-image-tag
+    default: devel
+  # - name: gitrevision
+  #   description: The git revision
+  #   default: main
+  # - name: gitrepositoryurl
+  #   description: The git repository url
+  # - name: message
+  #   description: The message to print
+  #   default: This is the default message
+  # - name: contenttype
+  #   description: The Content-Type of the event
+
+  resourcetemplates:
+  - apiVersion: tekton.dev/v1beta1
+    kind: PipelineRun
+    metadata:
+      generateName: okd-coreos-all-pipelinerun-
+      annotations:
+        operator.tekton.dev/prune.skip: "false"
+        operator.tekton.dev/prune.resources: "taskrun, pipelinerun"
+        operator.tekton.dev/prune.keep: "1"
+        operator.tekton.dev/prune.strategy: "keep"
+    spec:
+      serviceAccountName: pipeline
+      params:
+        - name: repo
+          value: $(tt.params.repo)
+        - name: branch
+          value: $(tt.params.branch)
+        - name: variant
+          value: $(tt.params.variant)   
+        - name: version
+          value: $(tt.params.version)
+        - name: rpm-artifacts-image
+          value: $(tt.params.rpm-artifacts-image)
+        - name: target-registry
+          value: $(tt.params.target-registry)
+        - name: baseos-container-image-name
+          value: $(tt.params.baseos-container-image-name)
+        - name: baseos-container-image-tag
+          value: $(tt.params.baseos-container-image-tag)
+        - name: extensions-container-image-name
+          value: $(tt.params.extensions-container-image-name)
+        - name: extensions-container-image-tag
+          value: $(tt.params.extensions-container-image-tag)
+      pipelineRef:
+        name: okd-coreos-all
+      timeouts:
+        pipeline: "3h0m0s"
+        tasks: "2h0m0s"
+      workspaces:
+        - name: shared-workspace
+          volumeClaimTemplate:
+            spec:
+              storageClassName: ocs-external-storagecluster-ceph-rbd
+              accessModes:
+              - ReadWriteOnce
+              resources:
+                requests:
+                  storage: 30Gi
+        - name: registry-credentials
+          secret:
+            secretName: okd-okd-robot-pull-secret
+        - name: credentials
+          secret:
+            secretName: okd-okd-robot-pull-secret

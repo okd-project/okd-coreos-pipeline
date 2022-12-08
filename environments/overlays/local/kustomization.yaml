@@ -6,7 +6,37 @@ bases:
   - ../../../manifests/tekton/pipelines/base
   # locally, we include kvm-device-plugin
   - ../../../manifests/tekton/daemonsets/base
+  - ../../../manifests/tekton/triggers/base
+  - patches/add_rbac.yaml
 resources:
   - namespace/namespace.yaml
 namespace: okd-coreos-pipeline
 
+patchesJson6902:
+- path: patches/set_event_listener_url.yaml
+  target:
+    group: batch
+    kind: CronJob
+    name:  daily-job
+    version: v1
+- path: patches/set_service_account_evt_lstnr.yaml
+  target:
+    group: triggers.tekton.dev
+    kind: EventListener
+    name:  cron-listener
+    version: v1beta1
+- path: patches/set_service_account_trg_template.yaml
+  target:
+    group: triggers.tekton.dev
+    kind: TriggerTemplate
+    name:  pipeline-template
+    version: v1beta1
+- patch: |-
+    - op: replace
+      path: "/spec/resourcetemplates/0/spec/workspaces/0/volumeClaimTemplate/spec/storageClassName"
+      value: "standard"
+  target:
+    group: triggers.tekton.dev
+    version: v1beta1
+    kind: TriggerTemplate
+    name:  pipeline-template

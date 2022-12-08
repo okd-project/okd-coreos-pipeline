@@ -1,0 +1,30 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerBinding
+metadata:
+  name: cron-binding
+spec:
+  params:
+  # - name: gitrevision
+  #   value: master
+  # - name: gitrepositoryurl
+  #   value: https://github.com/tektoncd/triggers
+  - name: repo
+    value: "https://github.com/openshift/os.git"
+  - name: branch
+    value: "master"
+  - name: variant
+    value: "scos"     
+  - name: version
+    value: "4.12"
+  - name: rpm-artifacts-image
+    value: "registry.ci.openshift.org/origin/4.12:artifacts"
+  - name: target-registry
+    value: "quay.io/okd"
+  - name: baseos-container-image-name
+    value: "centos-stream-coreos-9"
+  - name: baseos-container-image-tag
+    value: devel
+  - name: extensions-container-image-name
+    value: "centos-stream-coreos-9-extensions"
+  - name: extensions-container-image-tag
+    value: devel

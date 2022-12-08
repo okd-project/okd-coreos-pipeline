@@ -1,0 +1,5 @@
+bases:
+- triggertemplate.yaml
+- triggerbinding.yaml
+- eventlistener.yaml
+- cronjob.yaml

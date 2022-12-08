@@ -1,0 +1,46 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: okd-triggers-eventlistener-binding
+subjects:
+- kind: ServiceAccount
+  name: cosa-build-bot
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: tekton-triggers-eventlistener-roles
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: okd-triggers-eventlistener-clusterbinding
+subjects:
+- kind: ServiceAccount
+  name: cosa-build-bot
+  namespace: okd-coreos-pipeline
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: tekton-triggers-eventlistener-clusterroles
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: bot-view-cm
+subjects:
+- kind: ServiceAccount
+  name: cosa-build-bot
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: bot-view-cm-role
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: bot-view-cm-role
+  namespace: okd-team
+rules:
+- apiGroups: [""] 
+  resources: ["configmaps"]
+  verbs: ["get", "watch", "list"]

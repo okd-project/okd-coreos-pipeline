@@ -1,0 +1,3 @@
+- op: add
+  path: "/spec/jobTemplate/spec/template/spec/containers/0/args"
+  value: ["curl", "-X", "POST", "--data", "{}", "http://el-cron-listener.okd-team.svc.cluster.local:8080"]
