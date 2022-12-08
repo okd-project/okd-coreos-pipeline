@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: device-plugin-kvm
-        image: quay.io/luzuccar/kvm-device-plugin:latest
+        image: quay.io/cgwalters/kvm-device-plugin:latest
         securityContext:
           privileged: true
         volumeMounts:
