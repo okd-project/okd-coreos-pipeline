@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  generateName: okd-coreos-all-pipelinerun-
+  generateName: okd-coreos-all-4.12-pipelinerun-
   annotations:
     operator.tekton.dev/prune.skip: "false"
     operator.tekton.dev/prune.resources: "taskrun, pipelinerun"

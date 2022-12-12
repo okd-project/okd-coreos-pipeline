@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  generateName: okd-coreos-build-pipelinerun-
+  generateName: okd-coreos-build-4.13-pipelinerun-
   annotations:
     operator.tekton.dev/prune.skip: "false"
     operator.tekton.dev/prune.resources: "taskrun, pipelinerun"
@@ -16,9 +16,9 @@ spec:
     - name: variant
       value: "scos"     
     - name: version
-      value: "4.12"
+      value: "4.13"
     - name: rpm-artifacts-image
-      value: "registry.ci.openshift.org/origin/4.12:artifacts"
+      value: "registry.ci.openshift.org/origin/4.13:artifacts"
   pipelineRef:
     name: okd-coreos-build
   workspaces:

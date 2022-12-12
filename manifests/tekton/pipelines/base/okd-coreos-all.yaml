@@ -28,6 +28,9 @@ spec:
     - name: extensions-container-image-name
       default: "centos-stream-coreos-9-extensions"
       type: string
+    - name: tag-latest
+      default: "false"
+      type: string
   tasks:
     - name: rpm-artifacts-copy
       params:
@@ -90,6 +93,8 @@ spec:
           value: ostree
         - name: tag
           value: $(params.version)
+        - name: tag-latest
+          value: $(params.tag-latest)
       workspaces:
         - name: regcred
           workspace: registry-credentials
@@ -119,6 +124,8 @@ spec:
           value: extensions-container
         - name: tag
           value: $(params.version)
+        - name: tag-latest
+          value: $(params.tag-latest)
       workspaces:
         - name: regcred
           workspace: registry-credentials

@@ -76,24 +76,24 @@ Execute the following to start a pipelinerun locally:
 ```bash
 kubectl create \
     -n okd-coreos-pipeline \
-    -f environments/overlays/local/pipelineruns/okd-coreos-all-pipelinerun.yaml
+    -f environments/overlays/local/pipelineruns/okd-coreos-all-4.12-pipelinerun.yaml
 
 # see the logs
 tkn pipelinerun logs -f \
     -n okd-coreos-pipeline \
-    okd-coreos-all-pipelinerun-fooba
+    okd-coreos-all-4.12-pipelinerun-fooba
 ```
 
 On OperateFirst, run:
 ```bash
 kubectl create \
     -n okd-team \
-    -f environments/overlays/operate-first/pipelineruns/okd-coreos-all-pipelinerun.yaml
+    -f environments/overlays/operate-first/pipelineruns/okd-coreos-all-4.12-pipelinerun.yaml
 
 # see the logs
 tkn pipelinerun logs -f \
     -n okd-team \
-    okd-coreos-all-pipelinerun-fooba
+    okd-coreos-all-4.12-pipelinerun-fooba
 ```
 
 ## TODO
@@ -101,55 +101,3 @@ tkn pipelinerun logs -f \
 * Push the image artifacts to S3 bucket
 * Build and test images for more platforms
 * Control the previous build, so that we build when needed
-
-## Folder structure
-
-The folder structure is as follows :
-
-```bash
-.
-├── LICENSE
-├── README.md
-├── environments
-│   └── overlays
-│       ├── local
-│       │   ├── kustomization.yaml
-│       │   ├── namespace
-│       │   │   └── namespace.yaml
-│       │   └── pipelineruns
-│       │       ├── okd-coreos-all-pipelinerun.yaml
-│       │       └── okd-coreos-build-pipelinerun.yaml
-│       └── operate-first
-│           ├── kustomization.yaml
-│           └── pipelineruns
-│               ├── okd-coreos-all-pipelinerun.yaml
-│               └── okd-coreos-build-pipelinerun.yaml
-└── manifests
-    └── tekton
-        ├── daemonsets
-        │   └── base
-        │       ├── device-plugin-kvm-daemonset.yaml
-        │       └── kustomization.yaml
-        ├── pipelines
-        │   └── base
-        │       ├── kustomization.yaml
-        │       ├── okd-coreos-all.yaml
-        │       └── okd-coreos-build.yaml
-        ├── rbac
-        │   └── base
-        │       ├── admin.yaml
-        │       ├── edit.yaml
-        │       ├── kustomization.yaml
-        │       └── view.yaml
-        └── tasks
-            └── base
-                ├── cosa-build-baseos.yaml
-                ├── cosa-build-extensions.yaml
-                ├── cosa-buildextend.yaml
-                ├── cosa-init.yaml
-                ├── cosa-test.yaml
-                ├── cosa-upload.yaml
-                ├── kustomization.yaml
-                └── rpm-artifacts-copy.yaml
-
-```
