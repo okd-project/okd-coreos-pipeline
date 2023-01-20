@@ -17,7 +17,7 @@ spec:
       default: "4.12"
       type: string
     - name: tag-latest
-      default: false
+      default: "false"
       type: string
   steps:
     - image: 'quay.io/coreos-assembler/coreos-assembler:latest'
