@@ -19,10 +19,10 @@ spec:
         #!/usr/bin/env bash
         set -euxo pipefail
 
-        cd /workspace/coreos
+        cd /srv/coreos
         cosa buildextend-qemu
         cosa kola --basic-qemu-scenarios
 
   workspaces:
-    - mountPath: /workspace
+    - mountPath: /srv
       name: ws
