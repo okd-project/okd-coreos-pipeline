@@ -28,7 +28,7 @@ spec:
         #!/usr/bin/env bash
         set -euxo pipefail
 
-        cd /workspace/coreos
+        cd /srv/coreos
         cosa push-container --authfile=/registry-credentials/.dockerconfigjson --image=$(params.image) $(params.target-registry)/$(params.container-image-name):$(params.tag)-$(uname -m)
         if [[ "$(params.tag-latest)" == "true" ]]; then
           cosa push-container --authfile=/registry-credentials/.dockerconfigjson --image=$(params.image) $(params.target-registry)/$(params.container-image-name)
@@ -37,5 +37,5 @@ spec:
   workspaces:
     - mountPath: /registry-credentials
       name: regcred
-    - mountPath: /workspace
+    - mountPath: /srv
       name: ws

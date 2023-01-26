@@ -20,8 +20,8 @@ spec:
         #!/usr/bin/env bash
         set -euxo pipefail
 
-        cd /workspace/coreos
-        
+        cd /srv/coreos
+
         # The rpms that were extracted from the artifacts image
         # are not present inside the container used to build the
         # extensions, however `rpm-ostree compose extensions`
@@ -33,5 +33,5 @@ spec:
         cosa build-extensions-container
 
   workspaces:
-    - mountPath: /workspace
+    - mountPath: /srv
       name: ws

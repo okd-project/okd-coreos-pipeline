@@ -20,11 +20,11 @@ spec:
         #!/usr/bin/env bash
         set -euxo pipefail
 
-        cd /workspace/coreos
+        cd /srv/coreos
         cosa buildextend-metal4k
         cosa buildextend-metal
         cosa buildextend-live
 
   workspaces:
-    - mountPath: /workspace
+    - mountPath: /srv
       name: ws
