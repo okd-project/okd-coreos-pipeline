@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: delete-script
+  namespace: okd-team
+data:
+  delete-script.sh: |
+    #!/usr/bin/env bash
+    set -xuo pipefail
+    PRLIST=$(oc get pipelineruns -n okd-team | grep okd-coreos-all | awk '{print $1}')
+    for i in ${PRLIST}; do echo deleting ${i}; oc delete pipelinerun ${i} -n okd-team; done
