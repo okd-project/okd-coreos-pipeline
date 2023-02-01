@@ -64,6 +64,9 @@ spec:
         # https://github.com/openshift/os/pull/1006
         sed -i 's|file:///usr/share/distribution-gpg-keys/centos|https://www.centos.org/keys|g' src/config/c9s.repo
 
+        # tmp fix for replacing labels in manifest
+        sed -i 's/"4.13"/"$(params.version}"/g' /srv/coreos/src/config/manifest-c9s.yaml 
+
         # Get oc and hypershift from the yum repo in the artifacts image
         cat <<EOF >> src/config/c9s.repo
 
