@@ -26,7 +26,7 @@ spec:
         # are not present inside the container used to build the
         # extensions, however `rpm-ostree compose extensions`
         # will try to fetch metadata for all repos listed in
-        # both {manifest,extensions}.yaml 
+        # both {manifest,extensions}.yaml
         # TODO: Find a more elegant way to do this
         sed -i 's/- artifacts//' $(readlink -f src/config/manifest.yaml)
 

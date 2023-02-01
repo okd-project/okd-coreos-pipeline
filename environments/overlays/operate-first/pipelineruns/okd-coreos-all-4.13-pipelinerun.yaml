@@ -27,6 +27,12 @@ spec:
       value: "centos-stream-coreos-9-extensions"
     - name: tag-latest
       value: "false"
+    - name: s3-bucket-name
+      value: ""
+    - name: s3-endpoint-url
+      value: ""
+    - name: s3-aws-config-file
+      value: ""
   pipelineRef:
     name: okd-coreos-all
   timeouts:
@@ -36,6 +42,8 @@ spec:
     - name: registry-credentials
       secret:
         secretName: okd-scos-robot-pull-secret
+    - name: s3-credentials
+      emptyDir: {}
     - name: shared-workspace
       volumeClaimTemplate:
         spec:

@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: cosa-build-baseos
+  name: cosa-upload-s3
 spec:
   params:
     - name: bucket-name
@@ -15,34 +15,25 @@ spec:
       type: string
   steps:
     - image: 'quay.io/coreos-assembler/coreos-assembler:latest'
-      name: fetch-and-build-baseos
-      resources:
-        limits:
-          cpu: 1000m
-          devices.kubevirt.io/kvm: '1'
-          memory: 4Gi
-        requests:
-          cpu: 1000m
-          devices.kubevirt.io/kvm: '1'
-          memory: 4Gi
+      name: upload-image
+      onError: continue
+      resources: {}
       script: |
         #!/usr/bin/env bash
         set -euxo pipefail
 
         cd /srv/coreos
-
         if [[ -z "$(params.endpoint-url)" || -z "$(params.aws-config-file)" || -z "$(params.bucket-name)" ]]; then
-          echo "Skipping buildfetch from S3 - bucket params not set"
-        else
-          cosa buildfetch \
-          --url=s3://$(params.bucket-name) \
-          --aws-config-file=/s3-credentials/$(params.aws-config-file)
+          echo "Skipping upload to S3 - bucket params not set"
+          return 0
         fi
-        cosa fetch
-        cosa build ostree
+        cosa buildupload s3 \
+          --endpoint-url=$(params.endpoint-url) \
+          --aws-config-file=/s3-credentials/$(params.aws-config-file) \
+          $(params.bucket-name)
 
   workspaces:
-    - mountPath: /srv
-      name: ws
     - mountPath: /s3-credentials
       name: s3creds
+    - mountPath: /srv
+      name: ws

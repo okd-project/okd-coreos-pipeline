@@ -36,6 +36,8 @@ spec:
     - name: registry-credentials
       secret:
         secretName: okd-scos-robot-pull-secret
+    - name: s3-credentials
+      emptyDir: {}
     - name: shared-workspace
       volumeClaimTemplate:
         spec:

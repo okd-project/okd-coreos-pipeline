@@ -19,6 +19,15 @@ spec:
     - default: "registry.ci.openshift.org/origin/4.12:artifacts"
       name: rpm-artifacts-image
       type: string
+    - name: s3-bucket-name
+      default: ""
+      type: string
+    - name: s3-endpoint-url
+      default: ""
+      type: string
+    - name: s3-aws-config-file
+      default: ""
+      type: string
   tasks:
     - name: rpm-artifacts-copy
       params:
@@ -51,6 +60,13 @@ spec:
     - name: cosa-build-baseos
       runAfter:
         - cosa-init
+      params:
+        - name: bucket-name
+          value: $(params.s3-bucket-name)
+        - name: endpoint-url
+          value: $(params.s3-endpoint-url)
+        - name: aws-config-file
+          value: $(params.s3-aws-config-file)
       taskRef:
         kind: Task
         name: cosa-build-baseos
@@ -68,3 +84,4 @@ spec:
           workspace: shared-workspace
   workspaces:
     - name: shared-workspace
+    - name: s3-credentials
