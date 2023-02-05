@@ -31,6 +31,10 @@ spec:
       value: "okd-scos"
     - name: s3-endpoint-url
       value: "https://okd-scos.s3.amazonaws.com/"
+    - name: matrix-room
+      value: "!yKXXPqFwfCOTipZMxp:matrix.org"
+    - name: matrix-endpoint
+      value: 'matrix.org'
   pipelineRef:
     name: okd-coreos-all
   timeouts:

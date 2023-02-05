@@ -40,6 +40,12 @@ spec:
     - name: s3-aws-config-file
       default: "credentials"
       type: string
+    - name: matrix-room
+      description: room id (in the format !<ROOM_ID>:<SERVER_NAME>)
+      type: string
+    - name: matrix-endpoint
+      description: room id (in the format !<ROOM_ID>:<SERVER_NAME>)
+      type: string
   tasks:
     - name: rpm-artifacts-copy
       params:
@@ -186,6 +192,19 @@ spec:
           workspace: s3-credentials
         - name: ws
           workspace: shared-workspace
+    - name: notify-matrix
+      params:
+        - name: matrix-access-token
+          value: matrix-access-token
+        - name: endpoint
+          value: $(params.matrix-endpoint)
+        - name: room
+          value: $(params.matrix-room)
+        - name: message
+          value: "$(params.variant) - version $(params.version): Build from branch $(params.branch) $(tasks.status)"
+      taskRef:
+        kind: Task
+        name: notify-matrix-room
   workspaces:
     - name: registry-credentials
     - name: s3-credentials

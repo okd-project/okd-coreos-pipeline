@@ -71,6 +71,8 @@ git clone https://github.com/okd-project/okd-coreos-pipeline.git
 
 ## Usage
 
+### Locally
+
 Execute the following to start a pipelinerun locally:
 
 ```bash
@@ -84,6 +86,7 @@ tkn pipelinerun logs -f \
     okd-coreos-build-4.12-pipelinerun-fooba
 ```
 
+### OperateFirst
 On OperateFirst, run:
 ```bash
 kubectl create \
@@ -95,6 +98,23 @@ tkn pipelinerun logs -f \
     -n okd-team \
     okd-coreos-all-4.12-pipelinerun-fooba
 ```
+
+### Sending pipeline status to Matrix room
+
+In order for the pipeline to be able to send its status to a matrix room, make sure you create a secret, `matrix-access-token`, of type generic with a single key, `token`, containing the access token to the matrix endpoint.
+
+```yaml
+kind: Secret
+apiVersion: v1
+metadata:
+  name: matrix-access-token
+stringData:
+  token: {OAuth token for the bot app}
+```
+
+The pipeline run `environments/overlays/operate-first/pipelineruns/okd-coreos-all-4.*-pipelinerun.yaml` uses the following parameters:
+* `matrix-room` : containing the matrix roomID where the notification will be sent
+* `matrix-endpoint`: URI of the matrix server hosting the room
 
 ## TODO
 
