@@ -121,6 +121,9 @@ spec:
     - name: cosa-build-extensions
       runAfter:
         - cosa-test
+      params:
+        - name: variant
+          value: $(params.variant)
       taskRef:
         kind: Task
         name: cosa-build-extensions
