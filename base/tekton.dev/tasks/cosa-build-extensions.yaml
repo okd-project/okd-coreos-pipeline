@@ -10,7 +10,6 @@ spec:
   steps:
     - image: 'quay.io/coreos-assembler/coreos-assembler:latest'
       name: build-extensions-container
-      onError: continue
       resources:
         limits:
           cpu: 1000m

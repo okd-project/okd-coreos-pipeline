@@ -6,7 +6,6 @@ spec:
   steps:
     - image: 'quay.io/coreos-assembler/coreos-assembler:latest'
       name: buildextend
-      onError: continue
       resources:
         limits:
           cpu: 1000m

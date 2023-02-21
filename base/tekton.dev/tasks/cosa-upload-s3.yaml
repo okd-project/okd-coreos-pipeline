@@ -16,7 +16,6 @@ spec:
   steps:
     - image: 'quay.io/coreos-assembler/coreos-assembler:latest'
       name: upload-image
-      onError: continue
       resources: {}
       script: |
         #!/usr/bin/env bash
