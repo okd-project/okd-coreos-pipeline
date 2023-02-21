@@ -71,6 +71,8 @@ spec:
         kind: Task
         name: cosa-build-baseos
       workspaces:
+        - name: s3creds
+          workspace: s3-credentials
         - name: ws
           workspace: shared-workspace
     - name: cosa-test

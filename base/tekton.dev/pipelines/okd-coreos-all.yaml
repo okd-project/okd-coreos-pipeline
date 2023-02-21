@@ -83,10 +83,10 @@ spec:
         - name: aws-config-file
           value: $(params.s3-aws-config-file)
       workspaces:
-        - name: ws
-          workspace: shared-workspace
         - name: s3creds
           workspace: s3-credentials
+        - name: ws
+          workspace: shared-workspace
     - name: cosa-test
       runAfter:
         - cosa-build-baseos

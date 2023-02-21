@@ -43,7 +43,8 @@ spec:
       secret:
         secretName: okd-scos-robot-pull-secret
     - name: s3-credentials
-      emptyDir: {}
+      secret:
+        secretName: okd-scos-aws-config
     - name: shared-workspace
       volumeClaimTemplate:
         spec:
