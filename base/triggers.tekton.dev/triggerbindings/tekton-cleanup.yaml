@@ -1,0 +1,10 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerBinding
+metadata:
+  name: tekton-cleanup
+spec:
+  params:
+  - name: keep
+    value: $(body.params.keep) 
+  - name: namespace
+    value: $(body.params.namespace)

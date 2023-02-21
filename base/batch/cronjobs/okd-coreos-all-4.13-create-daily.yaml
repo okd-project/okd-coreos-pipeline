@@ -1,0 +1,49 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: okd-coreos-all-4.13-create-daily
+spec:
+  schedule: "0 6 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          volumes:
+          - name: workspace
+            emptyDir: {}
+          containers:
+          - name: send-trigger
+            image: curlimages/curl
+            command:
+              - /bin/sh
+            args:
+              - -ce
+              - |
+                cat <<EOF > /workspace/post-body.json
+                {
+                  "params": {
+                    "version": "${OKD_VERSION}",
+                    "rpm-artifacts-image": "${ARTIFACTS_IMAGE}",
+                    "tag-latest": "${TAG_LATEST}"
+                  }
+                }
+                EOF
+                curl -d @/workspace/post-body.json $SINK_URL
+            volumeMounts:
+            - mountPath: /workspace
+              name: workspace
+            env:
+              - name: SINK_URL
+                value: "http://el-okd-coreos-all.okd-team.svc.cluster.local:8080"
+              - name: OKD_VERSION
+                value: "4.13"
+              - name: ARTIFACTS_IMAGE
+                value: "registry.ci.openshift.org/origin/4.13:artifacts"
+              - name: TAG_LATEST
+                value: "false"
+            resources:
+              limits:
+                cpu: 100m
+                memory: 128Mi
+          restartPolicy: Never
+          dnsPolicy: ClusterFirst

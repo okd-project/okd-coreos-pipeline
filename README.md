@@ -29,8 +29,8 @@ git clone https://github.com/okd-project/okd-coreos-pipeline.git
     ```bash
     # assume you logged into your local cluster
 
-    # install tekton if haven't already
-    kubectl apply --filename https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
+    # install tekton if you haven't already
+    kubectl apply -f https://storage.googleapis.com/tekton-releases/operator/latest/release.yaml
 
     # the local overlay includes a device-plugin-kvm daemonset
     kubectl apply -k overlays/local

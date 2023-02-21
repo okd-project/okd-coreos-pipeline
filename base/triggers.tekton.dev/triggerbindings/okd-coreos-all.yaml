@@ -1,0 +1,12 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerBinding
+metadata:
+  name: okd-coreos-all
+spec:
+  params:
+  - name: version
+    value: $(body.params.version)
+  - name: rpm-artifacts-image
+    value: $(body.params.rpm-artifacts-image)
+  - name: tag-latest
+    value: $(body.params.tag-latest)

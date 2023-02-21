@@ -1,7 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
-  # locally, we include kvm-device-plugin and exclude gc cronjobs
+  # locally, we include kvm-device-plugin and exclude triggers and cronjobs
   - ../../base/apps/daemonsets/
   - ../../base/tekton.dev/pipelines/
   - ../../base/tekton.dev/tasks/

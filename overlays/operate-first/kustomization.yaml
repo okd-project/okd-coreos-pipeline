@@ -2,7 +2,9 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
   - ../../base/batch/cronjobs/
-  - ../../base/configmaps/
   - ../../base/tekton.dev/pipelines/
   - ../../base/tekton.dev/tasks/
+  - ../../base/triggers.tekton.dev/eventlisteners/
+  - ../../base/triggers.tekton.dev/triggerbindings/
+  - ../../base/triggers.tekton.dev/triggertemplates/
 namespace: okd-team
