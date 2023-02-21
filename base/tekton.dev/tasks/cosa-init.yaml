@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: cosa-init 
+  name: cosa-init
 spec:
   params:
     - description: The manifest repo URL
@@ -27,21 +27,21 @@ spec:
           devices.kubevirt.io/kvm: '1'
           memory: 4Gi
       script: |
-        #!/usr/bin/env bash 
-        set -euxo pipefail 
+        #!/usr/bin/env bash
+        set -euxo pipefail
 
         mkdir -p /srv/coreos
         cd /srv/coreos
 
         cat << INFO
         Initializing coreos-assembler:
-        
+
         Manifest repo:  $(params.repo)
         Branch:         $(params.branch)
 
         OKD version:    $(params.version)
         CoreOS variant: $(params.variant)
-        
+
         INFO
 
         cosa init \
