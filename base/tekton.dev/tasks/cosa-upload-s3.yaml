@@ -24,7 +24,7 @@ spec:
         cd /srv/coreos
         if [[ -z "$(params.endpoint-url)" || -z "$(params.aws-config-file)" || -z "$(params.bucket-name)" ]]; then
           echo "Skipping upload to S3 - bucket params not set"
-          return 0
+          exit 0
         fi
         cosa buildupload s3 \
           --endpoint-url=$(params.endpoint-url) \
