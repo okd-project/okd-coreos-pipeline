@@ -1,0 +1,12 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: EventListener
+metadata:
+  name: okd-coreos-all
+spec:
+  serviceAccountName: pipeline
+  triggers:
+    - name: okd-coreos-all-trigger
+      bindings:
+        - ref: okd-coreos-all
+      template:
+        ref: okd-coreos-all

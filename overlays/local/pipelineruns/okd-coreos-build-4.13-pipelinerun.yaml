@@ -1,0 +1,34 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: okd-coreos-build-4.13-pipelinerun-
+  annotations:
+    operator.tekton.dev/prune.skip: "false"
+    operator.tekton.dev/prune.resources: "taskrun, pipelinerun"
+    operator.tekton.dev/prune.keep: "1"
+    operator.tekton.dev/prune.strategy: "keep"
+spec:
+  params:
+    - name: repo
+      value: "https://github.com/openshift/os.git"
+    - name: branch
+      value: "master"
+    - name: variant
+      value: "scos"     
+    - name: version
+      value: "4.13"
+    - name: rpm-artifacts-image
+      value: "registry.ci.openshift.org/origin/4.13:artifacts"
+  pipelineRef:
+    name: okd-coreos-build
+  workspaces:
+    - name: s3-credentials
+      emptyDir: {}
+    - name: shared-workspace
+      volumeClaimTemplate:
+        spec:
+          accessModes: 
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 20Gi

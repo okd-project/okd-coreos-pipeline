@@ -1,0 +1,9 @@
+bases:
+  - cosa-build-baseos.yaml
+  - cosa-build-extensions.yaml
+  - cosa-buildextend.yaml
+  - cosa-init.yaml
+  - cosa-push-container.yaml
+  - cosa-test.yaml
+  - cosa-upload-s3.yaml
+  - rpm-artifacts-copy.yaml

@@ -1,0 +1,107 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: okd-coreos-build
+spec:
+  params:
+    - default: 'https://github.com/openshift/os.git'
+      name: repo
+      type: string
+    - default: 'release-4.12'
+      name: branch
+      type: string
+    - default: 'scos'
+      name: variant
+      type: string
+    - default: '4.12'
+      name: version
+      type: string
+    - default: "registry.ci.openshift.org/origin/4.12:artifacts"
+      name: rpm-artifacts-image
+      type: string
+    - name: s3-bucket-name
+      default: ""
+      type: string
+    - name: s3-endpoint-url
+      default: ""
+      type: string
+    - name: s3-aws-config-file
+      default: ""
+      type: string
+  tasks:
+    - name: rpm-artifacts-copy
+      params:
+        - name: image
+          value: $(params.rpm-artifacts-image)
+      taskRef:
+        kind: Task
+        name: rpm-artifacts-copy
+      workspaces:
+        - name: ws
+          workspace: shared-workspace
+    - name: cosa-init
+      runAfter:
+        - rpm-artifacts-copy
+      params:
+        - name: repo
+          value: $(params.repo)
+        - name: branch
+          value: $(params.branch)
+        - name: variant
+          value: $(params.variant)
+        - name: version
+          value: $(params.version)
+      taskRef:
+        kind: Task
+        name: cosa-init
+      workspaces:
+        - name: ws
+          workspace: shared-workspace
+    - name: cosa-build-baseos
+      runAfter:
+        - cosa-init
+      params:
+        - name: bucket-name
+          value: $(params.s3-bucket-name)
+        - name: endpoint-url
+          value: $(params.s3-endpoint-url)
+        - name: aws-config-file
+          value: $(params.s3-aws-config-file)
+      taskRef:
+        kind: Task
+        name: cosa-build-baseos
+      workspaces:
+        - name: s3creds
+          workspace: s3-credentials
+        - name: ws
+          workspace: shared-workspace
+    - name: cosa-test
+      runAfter:
+        - cosa-build-baseos
+      taskRef:
+        kind: Task
+        name: cosa-test
+      workspaces:
+        - name: ws
+          workspace: shared-workspace
+    - name: cosa-build-extensions
+      runAfter:
+        - cosa-test
+      taskRef:
+        kind: Task
+        name: cosa-build-extensions
+      workspaces:
+        - name: ws
+          workspace: shared-workspace
+    - name: cosa-buildextend
+      runAfter:
+        - cosa-test
+      taskRef:
+        kind: Task
+        name: cosa-buildextend
+      workspaces:
+        - name: ws
+          workspace: shared-workspace   
+  workspaces:
+    - name: shared-workspace
+    - name: s3-credentials

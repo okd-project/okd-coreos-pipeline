@@ -1,4 +1,0 @@
-bases:
-  - admin.yaml
-  - edit.yaml
-  - view.yaml

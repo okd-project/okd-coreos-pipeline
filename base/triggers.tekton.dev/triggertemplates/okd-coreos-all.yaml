@@ -1,0 +1,88 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: okd-coreos-all
+spec:
+  params:
+  - name: repo
+    default: "https://github.com/openshift/os.git"
+  - name: branch
+    default: "master"
+  - name: variant
+    default: "scos"     
+  - name: version
+    default: "4.13"
+  - name: rpm-artifacts-image
+    default: "registry.ci.openshift.org/origin/4.13:artifacts"
+  - name: target-registry
+    default: "quay.io/okd"
+  - name: baseos-container-image-name
+    default: "centos-stream-coreos-9"
+  - name: extensions-container-image-name
+    default: "centos-stream-coreos-9-extensions"
+  - name: tag-latest
+    default: "false"
+  - name: s3-bucket-name
+    default: ""
+  - name: s3-endpoint-url
+    default: ""
+  - name: s3-aws-config-file
+    default: ""
+  resourcetemplates:
+  - apiVersion: tekton.dev/v1beta1
+    kind: PipelineRun
+    metadata:
+      generateName: okd-coreos-all-$(tt.params.version)-pipelinerun-
+      annotations:
+        operator.tekton.dev/prune.skip: "false"
+        operator.tekton.dev/prune.resources: "taskrun, pipelinerun"
+        operator.tekton.dev/prune.keep: "1"
+        operator.tekton.dev/prune.strategy: "keep"
+    spec:
+      serviceAccountName: pipeline
+      params:
+        - name: repo
+          value: $(tt.params.repo)
+        - name: branch
+          value: $(tt.params.branch)
+        - name: variant
+          value: $(tt.params.variant)   
+        - name: version
+          value: $(tt.params.version)
+        - name: rpm-artifacts-image
+          value: $(tt.params.rpm-artifacts-image)
+        - name: target-registry
+          value: $(tt.params.target-registry)
+        - name: baseos-container-image-name
+          value: $(tt.params.baseos-container-image-name)
+        - name: extensions-container-image-name
+          value: $(tt.params.extensions-container-image-name)
+        - name: tag-latest
+          value: $(tt.params.tag-latest)
+        - name: s3-bucket-name
+          value: $(tt.params.s3-bucket-name)
+        - name: s3-endpoint-url
+          value: $(tt.params.s3-endpoint-url)
+        - name: s3-aws-config-file
+          value: $(tt.params.s3-aws-config-file)
+      pipelineRef:
+        name: okd-coreos-all
+      timeouts:
+        pipeline: "4h0m0s"
+        tasks: "1h30m0s"
+      workspaces:
+        - name: registry-credentials
+          secret:
+            secretName: okd-scos-robot-pull-secret
+        - name: s3-credentials
+          secret:
+            secretName: okd-scos-aws-config
+        - name: shared-workspace
+          volumeClaimTemplate:
+            spec:
+              storageClassName: ocs-external-storagecluster-ceph-rbd
+              accessModes:
+              - ReadWriteOnce
+              resources:
+                requests:
+                  storage: 40Gi

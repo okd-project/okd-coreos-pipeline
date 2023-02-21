@@ -29,11 +29,11 @@ git clone https://github.com/okd-project/okd-coreos-pipeline.git
     ```bash
     # assume you logged into your local cluster
 
-    # install tekton if haven't already
-    kubectl apply --filename https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
+    # install tekton if you haven't already
+    kubectl apply -f https://storage.googleapis.com/tekton-releases/operator/latest/release.yaml
 
     # the local overlay includes a device-plugin-kvm daemonset
-    kubectl apply -k environments/overlays/local
+    kubectl apply -k overlays/local
 
     # check that all resources have deployed
     kubectl get all -n okd-coreos-pipeline
@@ -63,7 +63,7 @@ git clone https://github.com/okd-project/okd-coreos-pipeline.git
 * OKD team members may do the following for deploying to the OperateFirst by executing the following commands:
     ```bash
     # assume you logged into your kubernetes cluster on OperateFirst
-    kubectl apply -k environments/overlays/operate-first
+    kubectl apply -k overlays/operate-first
 
     # check that all resources have deployed
     kubectl get all -n okd-team
@@ -76,19 +76,19 @@ Execute the following to start a pipelinerun locally:
 ```bash
 kubectl create \
     -n okd-coreos-pipeline \
-    -f environments/overlays/local/pipelineruns/okd-coreos-all-4.12-pipelinerun.yaml
+    -f overlays/local/pipelineruns/okd-coreos-build-4.12-pipelinerun.yaml
 
 # see the logs
 tkn pipelinerun logs -f \
     -n okd-coreos-pipeline \
-    okd-coreos-all-4.12-pipelinerun-fooba
+    okd-coreos-build-4.12-pipelinerun-fooba
 ```
 
 On OperateFirst, run:
 ```bash
 kubectl create \
     -n okd-team \
-    -f environments/overlays/operate-first/pipelineruns/okd-coreos-all-4.12-pipelinerun.yaml
+    -f overlays/operate-first/pipelineruns/okd-coreos-all-4.12-pipelinerun.yaml
 
 # see the logs
 tkn pipelinerun logs -f \

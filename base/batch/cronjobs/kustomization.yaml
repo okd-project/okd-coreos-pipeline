@@ -1,0 +1,4 @@
+bases:
+  - okd-coreos-all-4.12-create-daily.yaml
+  - okd-coreos-all-4.13-create-daily.yaml
+  - tekton-cleanup-daily.yaml

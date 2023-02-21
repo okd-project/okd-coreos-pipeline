@@ -1,6 +1,0 @@
-bases:
-  - okd-coreos-all.yaml
-  - okd-coreos-build.yaml
-
-
-
