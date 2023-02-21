@@ -31,6 +31,15 @@ spec:
     - name: tag-latest
       default: "false"
       type: string
+    - name: s3-bucket-name
+      default: ""
+      type: string
+    - name: s3-endpoint-url
+      default: ""
+      type: string
+    - name: s3-aws-config-file
+      default: ""
+      type: string
   tasks:
     - name: rpm-artifacts-copy
       params:
@@ -66,9 +75,18 @@ spec:
       taskRef:
         kind: Task
         name: cosa-build-baseos
+      params:
+        - name: bucket-name
+          value: $(params.s3-bucket-name)
+        - name: endpoint-url
+          value: $(params.s3-endpoint-url)
+        - name: aws-config-file
+          value: $(params.s3-aws-config-file)
       workspaces:
         - name: ws
           workspace: shared-workspace
+        - name: s3creds
+          workspace: s3-credentials
     - name: cosa-test
       runAfter:
         - cosa-build-baseos
@@ -83,7 +101,7 @@ spec:
         - cosa-test
       taskRef:
         kind: Task
-        name: cosa-upload
+        name: cosa-push-container
       params:
         - name: target-registry
           value: $(params.target-registry)
@@ -114,7 +132,7 @@ spec:
         - cosa-build-extensions
       taskRef:
         kind: Task
-        name: cosa-upload
+        name: cosa-push-container
       params:
         - name: target-registry
           value: $(params.target-registry)
@@ -140,6 +158,25 @@ spec:
       workspaces:
         - name: ws
           workspace: shared-workspace
+    - name: cosa-upload-liveiso
+      runAfter:
+        - cosa-buildextend
+      taskRef:
+        kind: Task
+        name: cosa-upload-s3
+      params:
+        - name: bucket-name
+          value: $(params.s3-bucket-name)
+        - name: endpoint-url
+          value: $(params.s3-endpoint-url)
+        - name: aws-config-file
+          value: $(params.s3-aws-config-file)
+      workspaces:
+        - name: s3creds
+          workspace: s3-credentials
+        - name: ws
+          workspace: shared-workspace
   workspaces:
     - name: registry-credentials
+    - name: s3-credentials
     - name: shared-workspace

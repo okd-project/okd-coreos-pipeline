@@ -22,6 +22,8 @@ spec:
   pipelineRef:
     name: okd-coreos-build
   workspaces:
+    - name: s3-credentials
+      emptyDir: {}
     - name: shared-workspace
       volumeClaimTemplate:
         spec:
