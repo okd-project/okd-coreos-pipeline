@@ -1,2 +1,0 @@
-bases:
-  - delete-script-configmap.yaml

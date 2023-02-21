@@ -1,0 +1,2 @@
+bases:
+  - daily-delete-pr-job.yaml

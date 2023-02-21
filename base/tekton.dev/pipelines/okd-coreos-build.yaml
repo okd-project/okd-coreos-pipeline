@@ -73,15 +73,33 @@ spec:
       workspaces:
         - name: ws
           workspace: shared-workspace
-    - name: cosa-build-extensions
+    - name: cosa-test
       runAfter:
         - cosa-build-baseos
+      taskRef:
+        kind: Task
+        name: cosa-test
+      workspaces:
+        - name: ws
+          workspace: shared-workspace
+    - name: cosa-build-extensions
+      runAfter:
+        - cosa-test
       taskRef:
         kind: Task
         name: cosa-build-extensions
       workspaces:
         - name: ws
           workspace: shared-workspace
+    - name: cosa-buildextend
+      runAfter:
+        - cosa-test
+      taskRef:
+        kind: Task
+        name: cosa-buildextend
+      workspaces:
+        - name: ws
+          workspace: shared-workspace   
   workspaces:
     - name: shared-workspace
     - name: s3-credentials

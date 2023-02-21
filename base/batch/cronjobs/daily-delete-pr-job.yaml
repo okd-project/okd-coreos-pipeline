@@ -2,7 +2,6 @@ kind: CronJob
 apiVersion: batch/v1
 metadata:
   name: daily-delete-pr-job
-  namespace: okd-team
 spec:
   schedule: 0 20 * * *
   concurrencyPolicy: Allow
