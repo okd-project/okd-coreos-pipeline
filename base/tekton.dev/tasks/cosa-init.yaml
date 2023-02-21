@@ -49,9 +49,6 @@ spec:
             --variant $(params.variant) \
             $(params.repo)
 
-        # Update symlinks for default manifests
-        cosa update-variant default $(params.variant)
-
         # Move rpms into scope of COSA VM
         if [ -d "/srv/rpms" ]; then
           mv /srv/rpms /srv/coreos/
@@ -59,11 +56,11 @@ spec:
         fi
 
         # TODO: Upstream to openshift/os
-        sed -i 's/rhel-9.*-server-ose.*/artifacts/' $(readlink -f src/config/manifest.yaml)
+        sed -i 's/rhel-9.*-server-ose.*/artifacts/' $(readlink -f src/config/manifest-$(params.variant).yaml)
 
         # tmp fix for replacing version labels in manifest
-        sed -i "s/\"4.13\"/\"$(params.version)\"/g" $(readlink -f src/config/manifest.yaml)
-        sed -i "s/\"413\.9./\"$(echo "$(params.version)" | sed 's/\.//')\.9./" $(readlink -f src/config/manifest.yaml)
+        sed -i "s/\"4.13\"/\"$(params.version)\"/g" $(readlink -f src/config/manifest-$(params.variant).yaml)
+        sed -i "s/\"413\.9./\"$(echo "$(params.version)" | sed 's/\.//')\.9./" $(readlink -f src/config/manifest-$(params.variant).yaml)
 
         # Get oc and hypershift from the yum repo in the artifacts image
         cat <<EOF >> src/config/c9s.repo
