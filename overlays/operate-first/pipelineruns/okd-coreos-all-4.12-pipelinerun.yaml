@@ -27,6 +27,10 @@ spec:
       value: "centos-stream-coreos-9-extensions"
     - name: tag-latest
       value: "true"
+    - name: s3-bucket-name
+      value: "okd-scos"
+    - name: s3-endpoint-url
+      value: "https://okd-scos.s3.amazonaws.com/"
   pipelineRef:
     name: okd-coreos-all
   timeouts:

@@ -11,28 +11,29 @@ spec:
       default: ""
       type: string
     - name: aws-config-file
-      default: ""
+      default: "credentials"
       type: string
   steps:
     - image: 'quay.io/coreos-assembler/coreos-assembler:latest'
       name: upload-image
+      onError: continue
       resources: {}
       script: |
         #!/usr/bin/env bash
         set -euxo pipefail
 
         cd /srv/coreos
-        if [[ -z "$(params.endpoint-url)" || -z "$(params.aws-config-file)" || -z "$(params.bucket-name)" ]]; then
+        if [[ -z "$(params.endpoint-url)" || ! -f "$(workspaces.s3creds.path)/$(params.aws-config-file)" || -z "$(params.bucket-name)" ]]; then
           echo "Skipping upload to S3 - bucket params not set"
           exit 0
         fi
         cosa buildupload s3 \
           --endpoint-url=$(params.endpoint-url) \
-          --aws-config-file=/s3-credentials/$(params.aws-config-file) \
-          $(params.bucket-name)
+          --aws-config-file=$(workspaces.s3creds.path)/$(params.aws-config-file) \
+          --acl=bucket-owner-full-control \
+          $(params.bucket-name)/builds
 
   workspaces:
-    - mountPath: /s3-credentials
-      name: s3creds
+    - name: s3creds
     - mountPath: /srv
       name: ws

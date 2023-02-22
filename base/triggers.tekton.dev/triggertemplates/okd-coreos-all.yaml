@@ -23,11 +23,11 @@ spec:
   - name: tag-latest
     default: "false"
   - name: s3-bucket-name
-    default: ""
+    default: "okd-scos"
   - name: s3-endpoint-url
-    default: ""
+    default: "https://okd-scos.s3.amazonaws.com/"
   - name: s3-aws-config-file
-    default: ""
+    default: "credentials"
   resourcetemplates:
   - apiVersion: tekton.dev/v1beta1
     kind: PipelineRun
