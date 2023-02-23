@@ -98,6 +98,5 @@ tkn pipelinerun logs -f \
 
 ## TODO
 
-* Push the image artifacts to S3 bucket
 * Build and test images for more platforms
 * Control the previous build, so that we build when needed

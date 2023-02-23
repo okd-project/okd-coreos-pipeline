@@ -38,7 +38,7 @@ spec:
       default: ""
       type: string
     - name: s3-aws-config-file
-      default: ""
+      default: "credentials"
       type: string
   tasks:
     - name: rpm-artifacts-copy
@@ -96,9 +96,29 @@ spec:
       workspaces:
         - name: ws
           workspace: shared-workspace
-    - name: cosa-upload-baseos
+    - name: cosa-build-extensions
       runAfter:
         - cosa-test
+      params:
+        - name: variant
+          value: $(params.variant)
+      taskRef:
+        kind: Task
+        name: cosa-build-extensions
+      workspaces:
+        - name: ws
+          workspace: shared-workspace
+    - name: cosa-buildextend
+      runAfter:
+        - cosa-test
+      taskRef:
+        kind: Task
+        name: cosa-buildextend
+      workspaces:
+        - name: ws
+          workspace: shared-workspace
+  finally:
+    - name: cosa-upload-baseos
       taskRef:
         kind: Task
         name: cosa-push-container
@@ -118,21 +138,7 @@ spec:
           workspace: registry-credentials
         - name: ws
           workspace: shared-workspace
-    - name: cosa-build-extensions
-      runAfter:
-        - cosa-test
-      params:
-        - name: variant
-          value: $(params.variant)
-      taskRef:
-        kind: Task
-        name: cosa-build-extensions
-      workspaces:
-        - name: ws
-          workspace: shared-workspace
     - name: cosa-upload-extensions
-      runAfter:
-        - cosa-build-extensions
       taskRef:
         kind: Task
         name: cosa-push-container
@@ -152,18 +158,7 @@ spec:
           workspace: registry-credentials
         - name: ws
           workspace: shared-workspace
-    - name: cosa-buildextend
-      runAfter:
-        - cosa-test
-      taskRef:
-        kind: Task
-        name: cosa-buildextend
-      workspaces:
-        - name: ws
-          workspace: shared-workspace
-    - name: cosa-upload-liveiso
-      runAfter:
-        - cosa-buildextend
+    - name: cosa-upload-bootimages
       taskRef:
         kind: Task
         name: cosa-upload-s3
