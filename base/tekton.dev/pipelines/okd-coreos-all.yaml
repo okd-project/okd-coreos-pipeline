@@ -4,6 +4,9 @@ metadata:
   name: okd-coreos-all
 spec:
   params:
+    - name: environment
+      default: local
+      type: string
     - default: "https://github.com/openshift/os.git"
       name: repo
       type: string
@@ -43,9 +46,11 @@ spec:
     - name: matrix-room
       description: room id (in the format !<ROOM_ID>:<SERVER_NAME>)
       type: string
+      default: "a_room"
     - name: matrix-endpoint
       description: room id (in the format !<ROOM_ID>:<SERVER_NAME>)
       type: string
+      default: "an_endpoint"
   tasks:
     - name: rpm-artifacts-copy
       params:
@@ -123,7 +128,6 @@ spec:
       workspaces:
         - name: ws
           workspace: shared-workspace
-  finally:
     - name: cosa-upload-baseos
       when:
         - input: $(tasks.status)
@@ -132,6 +136,19 @@ spec:
       taskRef:
         kind: Task
         name: cosa-push-container
+      runAfter:
+        - cosa-buildextend
+        - cosa-build-extensions
+      when:
+        - input: "${tasks.cosa-buildextend.status}"
+          operator: in
+          values: ["Succeeded"]
+        - input: "${tasks.cosa-cosa-build-extensions.status}"
+          operator: in
+          values: ["Succeeded"]
+        - input: "${params.environment}"
+          operator: in
+          values: ["operate-first"]
       params:
         - name: target-registry
           value: $(params.target-registry)
@@ -156,6 +173,19 @@ spec:
       taskRef:
         kind: Task
         name: cosa-push-container
+      runAfter:
+        - cosa-buildextend
+        - cosa-build-extensions
+      when:
+        - input: "${tasks.cosa-buildextend.status}"
+          operator: in
+          values: ["Succeeded"]
+        - input: "${tasks.cosa-cosa-build-extensions.status}"
+          operator: in
+          values: ["Succeeded"]
+        - input: "${params.environment}"
+          operator: in
+          values: ["operate-first"]
       params:
         - name: target-registry
           value: $(params.target-registry)
@@ -180,6 +210,19 @@ spec:
       taskRef:
         kind: Task
         name: cosa-upload-s3
+      runAfter:
+        - cosa-buildextend
+        - cosa-build-extensions
+      when:
+        - input: "${tasks.cosa-buildextend.status}"
+          operator: in
+          values: ["Succeeded"]
+        - input: "${tasks.cosa-cosa-build-extensions.status}"
+          operator: in
+          values: ["Succeeded"]
+        - input: "${params.environment}"
+          operator: in
+          values: ["operate-first"]
       params:
         - name: bucket-name
           value: $(params.s3-bucket-name)
@@ -191,8 +234,13 @@ spec:
         - name: s3creds
           workspace: s3-credentials
         - name: ws
-          workspace: shared-workspace
+          workspace: shared-workspace        
+  finally:
     - name: notify-matrix
+      when: 
+        - input: "${params.environment}"
+          operator: in
+          values: ["operate-first"]
       params:
         - name: matrix-access-token
           value: matrix-access-token
@@ -201,10 +249,10 @@ spec:
         - name: room
           value: $(params.matrix-room)
         - name: message
-          value: "$(params.variant) - version $(params.version): Build from branch $(params.branch) $(tasks.status)"
+          value: "PipelineRun $(context.pipelineRun.name) - $(params.variant) - version $(params.version): Build from branch $(params.branch) $(tasks.status)"
       taskRef:
         kind: Task
-        name: notify-matrix-room
+        name: notify-matrix
   workspaces:
     - name: registry-credentials
     - name: s3-credentials
