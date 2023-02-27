@@ -58,6 +58,9 @@ spec:
         # TODO: Upstream to openshift/os
         sed -i 's/rhel-9.*-server-ose.*/artifacts/' $(readlink -f src/config/manifest-$(params.variant).yaml)
 
+        # use openvswitch2.17 for 4.12, and temporarily for 4.13 too
+        sed -i 's/openvswitch3.1/openvswitch2.17/' src/config/common-el9.yaml
+
         # tmp fix for replacing version labels in manifest
         sed -i "s/\"4.13\"/\"$(params.version)\"/g" $(readlink -f src/config/manifest-$(params.variant).yaml)
         sed -i "s/\"413\.9./\"$(echo "$(params.version)" | sed 's/\.//')\.9./" $(readlink -f src/config/manifest-$(params.variant).yaml)
