@@ -31,7 +31,7 @@ spec:
           --endpoint-url=$(params.endpoint-url) \
           --aws-config-file=$(workspaces.s3creds.path)/$(params.aws-config-file) \
           --acl=bucket-owner-full-control \
-          $(params.bucket-name)/builds
+          builds
 
   workspaces:
     - name: s3creds
