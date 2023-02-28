@@ -56,7 +56,7 @@ spec:
         fi
 
         # TODO: Upstream to openshift/os
-        sed -i 's/rhel-9.*-server-ose.*/artifacts/' $(readlink -f src/config/manifest-$(params.variant).yaml)
+        sed -i 's/rhel-9.*-server-ose.*/artifacts\n  - podman-next-copr/' $(readlink -f src/config/manifest-$(params.variant).yaml)
 
         # use openvswitch2.17 for 4.12, and temporarily for 4.13 too
         sed -i 's/openvswitch3.1/openvswitch2.17/' src/config/common-el9.yaml
@@ -73,6 +73,18 @@ spec:
         baseurl=file:///srv/coreos/rpms/
         repo_gpgcheck=0
         gpgcheck=0
+        enabled=1
+
+        EOF
+
+        # Get conmon-rs from the rhcontainerbot/podman-next COPR repo
+        cat <<EOF >> src/config/c9s.repo
+        [podman-next-copr]
+        name=Copr repo for podman-next owned by rhcontainerbot
+        baseurl=https://download.copr.fedorainfracloud.org/results/rhcontainerbot/podman-next/centos-stream+epel-next-9-\$basearch/
+        gpgcheck=1
+        gpgkey=https://download.copr.fedorainfracloud.org/results/rhcontainerbot/podman-next/pubkey.gpg
+        repo_gpgcheck=0
         enabled=1
 
         EOF
