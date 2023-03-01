@@ -35,7 +35,7 @@ spec:
           echo "Skipping buildfetch from S3 - bucket params not set"
         else
           cosa buildfetch \
-          --url=s3://$(params.bucket-name)/builds \
+          --url=s3://$(params.bucket-name)/$(params.bucket-name)/builds \
           --aws-config-file=$(workspaces.s3creds.path)/$(params.aws-config-file)
         fi
         cosa fetch
