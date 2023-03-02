@@ -55,17 +55,19 @@ spec:
           createrepo_c /srv/coreos/rpms
         fi
 
-        # TODO: Upstream to openshift/os
-        sed -i 's/rhel-9.*-server-ose.*/artifacts/' $(readlink -f src/config/manifest-$(params.variant).yaml)
-
-        # use openvswitch2.17 for 4.12, and temporarily for 4.13 too
-        sed -i 's/openvswitch3.1/openvswitch2.17/' src/config/common-el9.yaml
-
-        # tmp fix for replacing version labels in manifest
+        # Replace all occurences of the version in the manifest
         sed -i "s/\"4.13\"/\"$(params.version)\"/g" $(readlink -f src/config/manifest-$(params.variant).yaml)
         sed -i "s/\"413\.9./\"$(echo "$(params.version)" | sed 's/\.//')\.9./" $(readlink -f src/config/manifest-$(params.variant).yaml)
 
-        # Get oc and hypershift from the yum repo in the artifacts image
+        # use openvswitch2.17 for 4.12
+        if [[ "$(params.version)" == "4.12" ]]; then
+          sed -i 's/openvswitch3.1/openvswitch2.17/' src/config/common-el9.yaml
+        fi
+
+        # TODO: Upstream to openshift/os
+        # Get oc and hypershift from the yum repo in the artifacts image,
+        # instead of the rhel ose repo.
+        sed -i 's/rhel-9.*-server-ose.*/artifacts/' $(readlink -f src/config/manifest-$(params.variant).yaml)
         cat <<EOF >> src/config/c9s.repo
 
         [artifacts]

@@ -119,6 +119,10 @@ spec:
           workspace: shared-workspace
   finally:
     - name: cosa-upload-baseos
+      when:
+        - input: $(tasks.status)
+          operator: in
+          values: ["Succeeded"]
       taskRef:
         kind: Task
         name: cosa-push-container
@@ -139,6 +143,10 @@ spec:
         - name: ws
           workspace: shared-workspace
     - name: cosa-upload-extensions
+      when:
+        - input: $(tasks.status)
+          operator: in
+          values: ["Succeeded"]
       taskRef:
         kind: Task
         name: cosa-push-container
@@ -159,6 +167,10 @@ spec:
         - name: ws
           workspace: shared-workspace
     - name: cosa-upload-bootimages
+      when:
+        - input: $(tasks.status)
+          operator: in
+          values: ["Succeeded"]
       taskRef:
         kind: Task
         name: cosa-upload-s3
