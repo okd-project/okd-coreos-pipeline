@@ -121,8 +121,8 @@ spec:
     - name: cosa-upload-baseos
       when:
         - input: $(tasks.status)
-          operator: in
-          values: ["Succeeded"]
+          operator: notin
+          values: ["Failed"]
       taskRef:
         kind: Task
         name: cosa-push-container
@@ -145,8 +145,8 @@ spec:
     - name: cosa-upload-extensions
       when:
         - input: $(tasks.status)
-          operator: in
-          values: ["Succeeded"]
+          operator: notin
+          values: ["Failed"]
       taskRef:
         kind: Task
         name: cosa-push-container
@@ -169,8 +169,8 @@ spec:
     - name: cosa-upload-bootimages
       when:
         - input: $(tasks.status)
-          operator: in
-          values: ["Succeeded"]
+          operator: notin
+          values: ["Failed"]
       taskRef:
         kind: Task
         name: cosa-upload-s3
