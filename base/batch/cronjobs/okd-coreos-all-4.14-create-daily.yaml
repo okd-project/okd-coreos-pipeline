@@ -1,9 +1,9 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: tekton-cleanup-daily
+  name: okd-coreos-all-4.14-create-daily
 spec:
-  schedule: "0 4 * * *"
+  schedule: "30 7 * * *"
   jobTemplate:
     spec:
       template:
@@ -12,7 +12,7 @@ spec:
           - name: workspace
             emptyDir: {}
           containers:
-          - name: tekton-cleanup-daily-job
+          - name: send-trigger
             image: curlimages/curl
             command:
               - /bin/sh
@@ -21,10 +21,10 @@ spec:
               - |
                 cat <<EOF > /workspace/post-body.json
                 {
-                  "trigger-template": "tekton-cleanup",
                   "params": {
-                    "namespace": "$NAMESPACE",
-                    "keep": "$CLEANUP_KEEP"
+                    "version": "${OKD_VERSION}",
+                    "rpm-artifacts-image": "${ARTIFACTS_IMAGE}",
+                    "tag-latest": "${TAG_LATEST}"
                   }
                 }
                 EOF
@@ -34,11 +34,13 @@ spec:
               name: workspace
             env:
               - name: SINK_URL
-                value: "http://el-tekton-cleanup.okd-team.svc.cluster.local:8080"
-              - name: NAMESPACE
-                value: "okd-team"
-              - name: CLEANUP_KEEP
-                value: "0"
+                value: "http://el-okd-coreos-all.okd-team.svc.cluster.local:8080"
+              - name: OKD_VERSION
+                value: "4.14"
+              - name: ARTIFACTS_IMAGE
+                value: "registry.ci.openshift.org/origin/4.14:artifacts"
+              - name: TAG_LATEST
+                value: "false"
             resources:
               limits:
                 cpu: 100m
