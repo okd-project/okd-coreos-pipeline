@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: tekton-cleanup-daily
 spec:
-  schedule: "0 20 * * *"
+  schedule: "0 4 * * *"
   jobTemplate:
     spec:
       template:
