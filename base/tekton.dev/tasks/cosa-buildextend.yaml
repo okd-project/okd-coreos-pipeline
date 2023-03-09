@@ -23,6 +23,7 @@ spec:
         cosa buildextend-metal4k
         cosa buildextend-metal
         cosa buildextend-live
+        cosa buildextend-openstack
 
   workspaces:
     - mountPath: /srv
