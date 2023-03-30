@@ -7,3 +7,4 @@ bases:
   - cosa-test.yaml
   - cosa-upload-s3.yaml
   - rpm-artifacts-copy.yaml
+  - notify-matrix.yaml
