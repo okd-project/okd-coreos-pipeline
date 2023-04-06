@@ -4,12 +4,14 @@ metadata:
   name: okd-coreos-all
 spec:
   params:
+  - name: environment
+    default: operate-first
   - name: repo
     default: "https://github.com/openshift/os.git"
   - name: branch
     default: "master"
   - name: variant
-    default: "scos"     
+    default: "scos"
   - name: version
     default: "4.13"
   - name: rpm-artifacts-image
@@ -41,6 +43,8 @@ spec:
     spec:
       serviceAccountName: pipeline
       params:
+        - name: environment
+          value: $(tt.params.environment)
         - name: repo
           value: $(tt.params.repo)
         - name: branch

@@ -9,6 +9,8 @@ metadata:
     operator.tekton.dev/prune.strategy: "keep"
 spec:
   params:
+    - name: environment
+      value: "operate-first"
     - name: repo
       value: "https://github.com/openshift/os.git"
     - name: branch
