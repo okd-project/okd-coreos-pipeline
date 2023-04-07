@@ -34,7 +34,9 @@ spec:
         sed -i 's/- artifacts//' $(readlink -f src/config/manifest-$(params.variant).yaml)
 
         cosa build-extensions-container
-
+        printf "%s" "OK" > $(results.output.path)
+  results:
+    - name: output
   workspaces:
     - mountPath: /srv
       name: ws

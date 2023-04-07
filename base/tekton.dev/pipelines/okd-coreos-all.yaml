@@ -43,14 +43,14 @@ spec:
     - name: s3-aws-config-file
       default: "credentials"
       type: string
-    - name: matrix-room
-      description: room id (in the format !<ROOM_ID>:<SERVER_NAME>)
-      type: string
-      default: "a_room"
-    - name: matrix-endpoint
-      description: room id (in the format !<ROOM_ID>:<SERVER_NAME>)
-      type: string
-      default: "an_endpoint"
+    # - name: matrix-room
+    #   description: room id (in the format !<ROOM_ID>:<SERVER_NAME>)
+    #   type: string
+    #   default: "a_room"
+    # - name: matrix-endpoint
+    #   description: room id (in the format !<ROOM_ID>:<SERVER_NAME>)
+    #   type: string
+    #   default: "an_endpoint"
   tasks:
     - name: rpm-artifacts-copy
       params:
@@ -99,6 +99,9 @@ spec:
         - name: ws
           workspace: shared-workspace
     - name: cosa-test
+      params:
+        - name: variant
+          value: $(params.variant)
       runAfter:
         - cosa-build-baseos
       taskRef:
@@ -129,26 +132,12 @@ spec:
         - name: ws
           workspace: shared-workspace
     - name: cosa-upload-baseos
-      when:
-        - input: $(tasks.status)
-          operator: notin
-          values: ["Failed"]
       taskRef:
         kind: Task
         name: cosa-push-container
       runAfter:
         - cosa-buildextend
         - cosa-build-extensions
-      when:
-        - input: "${tasks.cosa-buildextend.status}"
-          operator: in
-          values: ["Succeeded"]
-        - input: "${tasks.cosa-cosa-build-extensions.status}"
-          operator: in
-          values: ["Succeeded"]
-        - input: "${params.environment}"
-          operator: in
-          values: ["operate-first"]
       params:
         - name: target-registry
           value: $(params.target-registry)
@@ -165,11 +154,19 @@ spec:
           workspace: registry-credentials
         - name: ws
           workspace: shared-workspace
-    - name: cosa-upload-extensions
       when:
-        - input: $(tasks.status)
-          operator: notin
-          values: ["Failed"]
+      - input: $(params.environment)
+        operator: in
+        values:
+        - "operate-first"
+      - input: $(tasks.cosa-buildextend.results.output)
+        operator: in
+        values: ["OK"] # Using $(tasks.cosa-buildextend.status) did not pass validation webhook
+      - input: $(tasks.cosa-build-extensions.results.output)
+        operator: in
+        values: ["OK"]
+
+    - name: cosa-upload-extensions
       taskRef:
         kind: Task
         name: cosa-push-container
@@ -177,15 +174,16 @@ spec:
         - cosa-buildextend
         - cosa-build-extensions
       when:
-        - input: "${tasks.cosa-buildextend.status}"
-          operator: in
-          values: ["Succeeded"]
-        - input: "${tasks.cosa-cosa-build-extensions.status}"
-          operator: in
-          values: ["Succeeded"]
-        - input: "${params.environment}"
-          operator: in
-          values: ["operate-first"]
+      - input: $(params.environment)
+        operator: in
+        values:
+        - "operate-first"
+      - input: $(tasks.cosa-buildextend.results.output)
+        operator: in
+        values: ["OK"] # Using $(tasks.cosa-buildextend.status) did not pass validation webhook
+      - input: $(tasks.cosa-build-extensions.results.output)
+        operator: in
+        values: ["OK"]
       params:
         - name: target-registry
           value: $(params.target-registry)
@@ -203,10 +201,6 @@ spec:
         - name: ws
           workspace: shared-workspace
     - name: cosa-upload-bootimages
-      when:
-        - input: $(tasks.status)
-          operator: notin
-          values: ["Failed"]
       taskRef:
         kind: Task
         name: cosa-upload-s3
@@ -214,15 +208,16 @@ spec:
         - cosa-buildextend
         - cosa-build-extensions
       when:
-        - input: "${tasks.cosa-buildextend.status}"
-          operator: in
-          values: ["Succeeded"]
-        - input: "${tasks.cosa-cosa-build-extensions.status}"
-          operator: in
-          values: ["Succeeded"]
-        - input: "${params.environment}"
-          operator: in
-          values: ["operate-first"]
+      - input: $(params.environment)
+        operator: in
+        values:
+        - "operate-first"
+      - input: $(tasks.cosa-buildextend.results.output)
+        operator: in
+        values: ["OK"] # Using $(tasks.cosa-buildextend.status) did not pass validation webhook
+      - input: $(tasks.cosa-build-extensions.results.output)
+        operator: in
+        values: ["OK"]
       params:
         - name: bucket-name
           value: $(params.s3-bucket-name)
@@ -235,24 +230,24 @@ spec:
           workspace: s3-credentials
         - name: ws
           workspace: shared-workspace        
-  finally:
-    - name: notify-matrix
-      when: 
-        - input: "${params.environment}"
-          operator: in
-          values: ["operate-first"]
-      params:
-        - name: matrix-access-token
-          value: matrix-access-token
-        - name: endpoint
-          value: $(params.matrix-endpoint)
-        - name: room
-          value: $(params.matrix-room)
-        - name: message
-          value: "PipelineRun $(context.pipelineRun.name) - $(params.variant) - version $(params.version): Build from branch $(params.branch) $(tasks.status)"
-      taskRef:
-        kind: Task
-        name: notify-matrix
+  # finally:
+  #   - name: notify-matrix
+  #     when: 
+  #       - input: "${params.environment}"
+  #         operator: in
+  #         values: ["operate-first"]
+  #     params:
+  #       - name: matrix-access-token
+  #         value: matrix-access-token
+  #       - name: endpoint
+  #         value: $(params.matrix-endpoint)
+  #       - name: room
+  #         value: $(params.matrix-room)
+  #       - name: message
+  #         value: "PipelineRun $(context.pipelineRun.name) - $(params.variant) - version $(params.version): Build from branch $(params.branch) $(tasks.status)"
+  #     taskRef:
+  #       kind: Task
+  #       name: notify-matrix
   workspaces:
     - name: registry-credentials
     - name: s3-credentials

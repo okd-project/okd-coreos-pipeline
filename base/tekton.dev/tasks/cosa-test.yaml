@@ -3,6 +3,10 @@ kind: Task
 metadata:
   name: cosa-test
 spec:
+  params:
+    - name: variant
+      default: "scos"
+      type: string
   steps:
     - image: 'quay.io/coreos-assembler/coreos-assembler:latest'
       name: build-and-test-qemu
@@ -21,8 +25,11 @@ spec:
 
         cd /srv/coreos
         cosa buildextend-qemu
-        cosa kola --basic-qemu-scenarios
-
+        if [[ "$(params.variant)" != "scos" ]]; then
+          cosa kola --basic-qemu-scenarios
+        else
+          cosa kola --basic-qemu-scenarios --skip-secure-boot
+        fi
   workspaces:
     - mountPath: /srv
       name: ws

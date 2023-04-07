@@ -24,7 +24,10 @@ spec:
         cosa buildextend-metal
         cosa buildextend-live
         cosa buildextend-openstack
+        printf "%s" "OK" > $(results.output.path)
 
+  results:
+    - name: output
   workspaces:
     - mountPath: /srv
       name: ws
