@@ -43,14 +43,14 @@ spec:
     - name: s3-aws-config-file
       default: "credentials"
       type: string
-    # - name: matrix-room
-    #   description: room id (in the format !<ROOM_ID>:<SERVER_NAME>)
-    #   type: string
-    #   default: "a_room"
-    # - name: matrix-endpoint
-    #   description: room id (in the format !<ROOM_ID>:<SERVER_NAME>)
-    #   type: string
-    #   default: "an_endpoint"
+    - name: matrix-room
+      description: room id (in the format !<ROOM_ID>:<SERVER_NAME>)
+      type: string
+      default: "a_room"
+    - name: matrix-endpoint
+      description: room id (in the format !<ROOM_ID>:<SERVER_NAME>)
+      type: string
+      default: "an_endpoint"
   tasks:
     - name: rpm-artifacts-copy
       params:
@@ -230,24 +230,24 @@ spec:
           workspace: s3-credentials
         - name: ws
           workspace: shared-workspace        
-  # finally:
-  #   - name: notify-matrix
-  #     when: 
-  #       - input: "${params.environment}"
-  #         operator: in
-  #         values: ["operate-first"]
-  #     params:
-  #       - name: matrix-access-token
-  #         value: matrix-access-token
-  #       - name: endpoint
-  #         value: $(params.matrix-endpoint)
-  #       - name: room
-  #         value: $(params.matrix-room)
-  #       - name: message
-  #         value: "PipelineRun $(context.pipelineRun.name) - $(params.variant) - version $(params.version): Build from branch $(params.branch) $(tasks.status)"
-  #     taskRef:
-  #       kind: Task
-  #       name: notify-matrix
+  finally:
+    - name: notify-matrix
+      when: 
+        - input: "$(params.environment)"
+          operator: in
+          values: ["operate-first"]
+      params:
+        - name: matrix-secret
+          value: okd-bot-matrix-user
+        - name: endpoint
+          value: $(params.matrix-endpoint)
+        - name: room
+          value: $(params.matrix-room)
+        - name: message
+          value: "PipelineRun $(context.pipelineRun.name) - $(params.variant) - version $(params.version): Build from branch $(params.branch) $(tasks.status)"
+      taskRef:
+        kind: Task
+        name: notify-matrix
   workspaces:
     - name: registry-credentials
     - name: s3-credentials

@@ -12,11 +12,9 @@ metadata:
 spec:
   description: >-
     These tasks post a simple message to a matrix room.
-
     This task uses Matrix's Client-Server REST api to send the message.
-
   params:
-  - name: matrix-access-token
+  - name: matrix-secret
     type: string
     description: secret name containing matrix access token (key is token)
   - name: room
@@ -42,5 +40,5 @@ spec:
     - name: TOKEN
       valueFrom:
         secretKeyRef:
-          name: $(params.matrix-access-token)
+          name: $(params.matrix-secret)
           key: token

@@ -34,10 +34,10 @@ spec:
     - name: s3-endpoint-url
       value: "https://okd-scos.s3.amazonaws.com/"
     # TODO Update with values for OKD WG
-    # - name: matrix-room
-    #   value: "!yKXXPqFwfCOTipZMxp:matrix.org"
-    # - name: matrix-endpoint
-    #   value: 'matrix.org'
+    - name: matrix-room
+      value: "!nStsazaBvZCZQHPWTY:fedoraproject.org"
+    - name: matrix-endpoint
+      value: 'matrix.org'
   pipelineRef:
     name: okd-coreos-all
   timeouts:
