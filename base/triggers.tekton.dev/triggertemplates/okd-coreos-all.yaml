@@ -30,6 +30,10 @@ spec:
     default: "https://okd-scos.s3.amazonaws.com/"
   - name: s3-aws-config-file
     default: "credentials"
+  - name: matrix-room
+    default: "!nStsazaBvZCZQHPWTY:fedoraproject.org"
+  - name: matrix-endpoint
+    default: 'matrix.org'
   resourcetemplates:
   - apiVersion: tekton.dev/v1beta1
     kind: PipelineRun
@@ -69,6 +73,10 @@ spec:
           value: $(tt.params.s3-endpoint-url)
         - name: s3-aws-config-file
           value: $(tt.params.s3-aws-config-file)
+        - name: matrix-room
+          value: $(tt.params.matrix-room)
+        - name: matrix-endpoint
+          value: $(tt.params.matrix-endpoint)
       pipelineRef:
         name: okd-coreos-all
       timeouts:
