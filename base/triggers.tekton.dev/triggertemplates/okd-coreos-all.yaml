@@ -81,7 +81,6 @@ spec:
         name: okd-coreos-all
       timeouts:
         pipeline: "4h0m0s"
-        tasks: "1h30m0s"
       workspaces:
         - name: registry-credentials
           secret:
