@@ -4,19 +4,19 @@ metadata:
   name: okd-coreos-build
 spec:
   params:
-    - default: 'https://github.com/openshift/os.git'
+    - default: "https://github.com/openshift/os.git"
       name: repo
       type: string
-    - default: 'release-4.12'
+    - default: "master"
       name: branch
       type: string
-    - default: 'scos'
+    - default: "scos"
       name: variant
       type: string
-    - default: '4.12'
+    - default: "4.14"
       name: version
       type: string
-    - default: "registry.ci.openshift.org/origin/4.12:artifacts"
+    - default: "registry.ci.openshift.org/origin/4.14:artifacts"
       name: rpm-artifacts-image
       type: string
     - name: s3-bucket-name

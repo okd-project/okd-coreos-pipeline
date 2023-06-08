@@ -4,6 +4,8 @@ metadata:
   name: okd-coreos-all
 spec:
   params:
+  - name: branch
+    value: $(body.params.branch)
   - name: version
     value: $(body.params.version)
   - name: rpm-artifacts-image

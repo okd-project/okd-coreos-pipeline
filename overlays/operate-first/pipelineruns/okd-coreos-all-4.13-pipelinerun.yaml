@@ -14,7 +14,7 @@ spec:
     - name: repo
       value: "https://github.com/openshift/os.git"
     - name: branch
-      value: "master"
+      value: "release-4.13"
     - name: variant
       value: "scos"     
     - name: version
@@ -28,7 +28,7 @@ spec:
     - name: extensions-container-image-name
       value: "centos-stream-coreos-9-extensions"
     - name: tag-latest
-      value: "false"
+      value: "true"
     - name: s3-bucket-name
       value: "okd-scos"
     - name: s3-endpoint-url

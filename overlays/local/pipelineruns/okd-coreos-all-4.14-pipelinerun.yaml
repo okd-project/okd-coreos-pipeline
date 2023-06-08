@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  generateName: okd-coreos-all-4.12-pipelinerun-
+  generateName: okd-coreos-all-4.14-pipelinerun-
   annotations:
     operator.tekton.dev/prune.skip: "false"
     operator.tekton.dev/prune.resources: "taskrun, pipelinerun"
@@ -18,9 +18,9 @@ spec:
     - name: variant
       value: "scos"     
     - name: version
-      value: "4.12"
+      value: "4.14"
     - name: rpm-artifacts-image
-      value: "registry.ci.openshift.org/origin/4.12:artifacts"
+      value: "registry.ci.openshift.org/origin/4.14:artifacts"
     - name: target-registry
       value: "quay.io/okd"
     - name: baseos-container-image-name

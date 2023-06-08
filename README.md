@@ -78,12 +78,12 @@ Execute the following to start a pipelinerun locally:
 ```bash
 kubectl create \
     -n okd-coreos-pipeline \
-    -f overlays/local/pipelineruns/okd-coreos-build-4.12-pipelinerun.yaml
+    -f overlays/local/pipelineruns/okd-coreos-build-4.13-pipelinerun.yaml
 
 # see the logs
 tkn pipelinerun logs -f \
     -n okd-coreos-pipeline \
-    okd-coreos-build-4.12-pipelinerun-fooba
+    okd-coreos-build-4.13-pipelinerun-fooba
 ```
 
 ### OperateFirst
@@ -91,12 +91,12 @@ On OperateFirst, run:
 ```bash
 kubectl create \
     -n okd-team \
-    -f overlays/operate-first/pipelineruns/okd-coreos-all-4.12-pipelinerun.yaml
+    -f overlays/operate-first/pipelineruns/okd-coreos-all-4.13-pipelinerun.yaml
 
 # see the logs
 tkn pipelinerun logs -f \
     -n okd-team \
-    okd-coreos-all-4.12-pipelinerun-fooba
+    okd-coreos-all-4.13-pipelinerun-fooba
 ```
 
 ### Sending pipeline status to Matrix room
