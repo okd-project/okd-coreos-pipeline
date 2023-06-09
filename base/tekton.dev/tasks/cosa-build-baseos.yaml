@@ -4,6 +4,9 @@ metadata:
   name: cosa-build-baseos
 spec:
   params:
+    - name: release-stream
+      default: ""
+      type: string
     - name: bucket-name
       default: ""
       type: string
@@ -31,11 +34,11 @@ spec:
 
         cd /srv/coreos
 
-        if [[ -z "$(params.endpoint-url)" || ! -f "$(workspaces.s3creds.path)/$(params.aws-config-file)" || -z "$(params.bucket-name)" ]]; then
+        if [[ -z "$(params.endpoint-url)" || ! -f "$(workspaces.s3creds.path)/$(params.aws-config-file)" || -z "$(params.bucket-name)" || -z "$(params.release-stream)" ]]; then
           echo "Skipping buildfetch from S3 - bucket params not set"
         else
           cosa buildfetch \
-          --url=s3://$(params.bucket-name)/$(params.bucket-name)/builds \
+          --url=s3://$(params.bucket-name)/$(params.bucket-name)/$(params.release-stream)/builds \
           --aws-config-file=$(workspaces.s3creds.path)/$(params.aws-config-file)
         fi
         cosa fetch

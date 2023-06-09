@@ -17,6 +17,8 @@ spec:
       value: "scos"     
     - name: version
       value: "4.14"
+    - name: release-stream
+      value: "next"
     - name: rpm-artifacts-image
       value: "registry.ci.openshift.org/origin/4.14:artifacts"
   pipelineRef:

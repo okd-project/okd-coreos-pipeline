@@ -19,6 +19,9 @@ spec:
     - default: "registry.ci.openshift.org/origin/4.14:artifacts"
       name: rpm-artifacts-image
       type: string
+    - name: release-stream
+      default: "next"
+      type: string
     - name: s3-bucket-name
       default: ""
       type: string
@@ -61,6 +64,8 @@ spec:
       runAfter:
         - cosa-init
       params:
+        - name: release-stream
+          value: $(params.release-stream)
         - name: bucket-name
           value: $(params.s3-bucket-name)
         - name: endpoint-url
@@ -101,13 +106,29 @@ spec:
           workspace: shared-workspace
     - name: cosa-buildextend
       runAfter:
-        - cosa-test
+        - cosa-build-extensions
       taskRef:
         kind: Task
         name: cosa-buildextend
       workspaces:
         - name: ws
-          workspace: shared-workspace   
+          workspace: shared-workspace 
+    - name: cosa-generate-release-meta
+      params:
+        - name: release-stream
+          value: $(params.release-stream)
+        - name: bucket-name
+          value: $(params.s3-bucket-name)
+        - name: endpoint-url
+          value: $(params.s3-endpoint-url)
+      runAfter:
+        - cosa-buildextend
+      taskRef:
+        kind: Task
+        name: cosa-generate-release-meta
+      workspaces:
+        - name: ws
+          workspace: shared-workspace 
   workspaces:
     - name: shared-workspace
     - name: s3-credentials

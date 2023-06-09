@@ -19,6 +19,9 @@ spec:
     - default: "4.14"
       name: version
       type: string
+    - name: release-stream
+      default: "next"
+      type: string
     - default: "registry.ci.openshift.org/origin/4.14:artifacts"
       name: rpm-artifacts-image
       type: string
@@ -87,6 +90,8 @@ spec:
         kind: Task
         name: cosa-build-baseos
       params:
+        - name: release-stream
+          value: $(params.release-stream)
         - name: bucket-name
           value: $(params.s3-bucket-name)
         - name: endpoint-url
@@ -131,13 +136,30 @@ spec:
       workspaces:
         - name: ws
           workspace: shared-workspace
+    - name: cosa-generate-release-meta
+      params:
+        - name: release-stream
+          value: $(params.release-stream)
+        - name: bucket-name
+          value: $(params.s3-bucket-name)
+        - name: endpoint-url
+          value: $(params.s3-endpoint-url)
+      runAfter:
+        - cosa-build-baseos
+        - cosa-build-extensions
+        - cosa-buildextend
+      taskRef:
+        kind: Task
+        name: cosa-generate-release-meta
+      workspaces:
+        - name: ws
+          workspace: shared-workspace
     - name: cosa-upload-baseos
       taskRef:
         kind: Task
         name: cosa-push-container
       runAfter:
-        - cosa-buildextend
-        - cosa-build-extensions
+        - cosa-generate-release-meta
       params:
         - name: target-registry
           value: $(params.target-registry)
@@ -165,14 +187,12 @@ spec:
       - input: $(tasks.cosa-build-extensions.results.output)
         operator: in
         values: ["OK"]
-
     - name: cosa-upload-extensions
       taskRef:
         kind: Task
         name: cosa-push-container
       runAfter:
-        - cosa-buildextend
-        - cosa-build-extensions
+        - cosa-generate-release-meta
       when:
       - input: $(params.environment)
         operator: in
@@ -205,8 +225,7 @@ spec:
         kind: Task
         name: cosa-upload-s3
       runAfter:
-        - cosa-buildextend
-        - cosa-build-extensions
+        - cosa-generate-release-meta
       when:
       - input: $(params.environment)
         operator: in
@@ -219,6 +238,8 @@ spec:
         operator: in
         values: ["OK"]
       params:
+        - name: release-stream
+          value: $(params.release-stream)
         - name: bucket-name
           value: $(params.s3-bucket-name)
         - name: endpoint-url

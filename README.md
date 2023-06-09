@@ -78,12 +78,12 @@ Execute the following to start a pipelinerun locally:
 ```bash
 kubectl create \
     -n okd-coreos-pipeline \
-    -f overlays/local/pipelineruns/okd-coreos-build-4.13-pipelinerun.yaml
+    -f overlays/local/pipelineruns/okd-coreos-build-4.14-pipelinerun.yaml
 
 # see the logs
 tkn pipelinerun logs -f \
     -n okd-coreos-pipeline \
-    okd-coreos-build-4.13-pipelinerun-fooba
+    okd-coreos-build-4.14-pipelinerun-fooba
 ```
 
 ### OperateFirst

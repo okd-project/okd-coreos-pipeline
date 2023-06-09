@@ -24,6 +24,7 @@ spec:
                   "params": {
                     "branch": "${BRANCH}",
                     "version": "${OKD_VERSION}",
+                    "release-stream": "${RELEASE_STREAM}"
                     "rpm-artifacts-image": "${ARTIFACTS_IMAGE}",
                     "tag-latest": "${TAG_LATEST}"
                     "claimname": "${CLAIMNAME}"
@@ -41,6 +42,8 @@ spec:
                 value: "master"
               - name: OKD_VERSION
                 value: "4.14"
+              - name: RELEASE_STREAM
+                value: "next"
               - name: ARTIFACTS_IMAGE
                 value: "registry.ci.openshift.org/origin/4.14:artifacts"
               - name: TAG_LATEST
