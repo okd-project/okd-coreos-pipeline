@@ -9,8 +9,6 @@ metadata:
     operator.tekton.dev/prune.strategy: "keep"
 spec:
   params:
-    - name: environment
-      value: "operate-first"
     - name: repo
       value: "https://github.com/openshift/os.git"
     - name: branch
@@ -29,17 +27,22 @@ spec:
       value: "centos-stream-coreos-9"
     - name: extensions-container-image-name
       value: "centos-stream-coreos-9-extensions"
-    - name: tag-latest
-      value: "true"
     - name: s3-bucket-name
       value: "okd-scos"
     - name: s3-endpoint-url
       value: "https://okd-scos.s3.amazonaws.com/"
-    # TODO Update with values for OKD WG
     - name: matrix-room
       value: "!nStsazaBvZCZQHPWTY:fedoraproject.org"
     - name: matrix-endpoint
-      value: 'matrix.org'
+      value: "matrix.org"
+    - name: upload-container-images
+      value: "true"
+    - name: tag-latest
+      value: "true"
+    - name: upload-bootimages
+      value: "true"
+    - name: notify-matrix
+      value: "true"
   pipelineRef:
     name: okd-coreos-all
   timeouts:

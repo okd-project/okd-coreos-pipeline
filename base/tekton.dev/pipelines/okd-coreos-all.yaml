@@ -4,9 +4,6 @@ metadata:
   name: okd-coreos-all
 spec:
   params:
-    - name: environment
-      default: local
-      type: string
     - default: "https://github.com/openshift/os.git"
       name: repo
       type: string
@@ -34,7 +31,13 @@ spec:
     - name: extensions-container-image-name
       default: "centos-stream-coreos-9-extensions"
       type: string
+    - name: upload-container-images
+      default: "false"
+      type: string
     - name: tag-latest
+      default: "false"
+      type: string
+    - name: upload-bootimages
       default: "false"
       type: string
     - name: s3-bucket-name
@@ -45,6 +48,9 @@ spec:
       type: string
     - name: s3-aws-config-file
       default: "credentials"
+      type: string
+    - name: notify-matrix
+      default: "false"
       type: string
     - name: matrix-room
       description: room id (in the format !<ROOM_ID>:<SERVER_NAME>)
@@ -177,10 +183,9 @@ spec:
         - name: ws
           workspace: shared-workspace
       when:
-      - input: $(params.environment)
+      - input: $(params.upload-container-images)
         operator: in
-        values:
-        - "operate-first"
+        values: ["true"]
       - input: $(tasks.cosa-buildextend.results.output)
         operator: in
         values: ["OK"] # Using $(tasks.cosa-buildextend.status) did not pass validation webhook
@@ -194,10 +199,9 @@ spec:
       runAfter:
         - cosa-generate-release-meta
       when:
-      - input: $(params.environment)
+      - input: $(params.upload-container-images)
         operator: in
-        values:
-        - "operate-first"
+        values: ["true"]
       - input: $(tasks.cosa-buildextend.results.output)
         operator: in
         values: ["OK"] # Using $(tasks.cosa-buildextend.status) did not pass validation webhook
@@ -227,10 +231,9 @@ spec:
       runAfter:
         - cosa-generate-release-meta
       when:
-      - input: $(params.environment)
+      - input: $(params.upload-bootimages)
         operator: in
-        values:
-        - "operate-first"
+        values: ["true"]
       - input: $(tasks.cosa-buildextend.results.output)
         operator: in
         values: ["OK"] # Using $(tasks.cosa-buildextend.status) did not pass validation webhook
@@ -254,9 +257,9 @@ spec:
   finally:
     - name: notify-matrix
       when: 
-        - input: "$(params.environment)"
+        - input: "$(params.notify-matrix)"
           operator: in
-          values: ["operate-first"]
+          values: ["true"]
       params:
         - name: matrix-secret
           value: okd-bot-matrix-user
