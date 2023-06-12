@@ -19,6 +19,10 @@ spec:
       value: "4.13"
     - name: release-stream
       value: "stable"
+    - name: s3-bucket-name
+      value: "okd-scos"
+    - name: s3-endpoint-url
+      value: "https://okd-scos.s3.amazonaws.com/"
     - name: rpm-artifacts-image
       value: "registry.ci.openshift.org/origin/4.13:artifacts"
     - name: target-registry

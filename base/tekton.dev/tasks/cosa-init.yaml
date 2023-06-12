@@ -56,9 +56,16 @@ spec:
         fi
 
         # TODO: Upstream to openshift/os
-        # Get oc and hypershift from the yum repo in the artifacts image,
-        # instead of the rhel ose repo.
+        # Remove OpenShift package layer from SCOS base manifest
+        sed -i '/- packages-openshift.yaml/d' $(readlink -f src/config/manifest-$(params.variant).yaml)
+
+        # Don't inject CVO layers in SCOS base compose
+        sed -i 's/ostree-container-inject-openshift-cvo-labels: true/ostree-container-inject-openshift-cvo-labels: false/' $(readlink -f src/config/image-$(params.variant).yaml)
+
+        # Get oc and hyperkube rpms frpm the artifacts image instead of rhel ose repo
         sed -i 's/rhel-9.*-server-ose.*/artifacts/' $(readlink -f src/config/manifest-$(params.variant).yaml)
+
+        # Add repo for RPMs from artifacts container image
         cat <<EOF >> src/config/c9s.repo
 
         [artifacts]

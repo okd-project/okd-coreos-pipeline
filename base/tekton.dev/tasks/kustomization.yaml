@@ -11,3 +11,4 @@ resources:
   - cosa-generate-release-meta.yaml
   - rpm-artifacts-copy.yaml
   - notify-matrix.yaml
+  - build-layer.yaml

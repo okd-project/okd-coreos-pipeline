@@ -1,0 +1,58 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: build-layer
+spec:
+  steps:
+    - image: quay.io/podman/stable:latest
+      name: build-layer
+      resources: {}
+      securityContext:
+        privileged: true
+      script: |
+        #!/usr/bin/env bash
+        set -euxo pipefail
+
+        dnf install -y jq
+
+        cd /srv/coreos
+
+        OSTREE_VERSION=$(jq -r '."ostree-version"' < builds/latest/$(uname -m)/meta.json)
+        OSTREE_TARFILE=$(jq -r '.images.ostree.path' < builds/latest/$(uname -m)/meta.json)
+
+        # the c9s.repo file is meant to be consumed by a COSA container
+        # where the RPM GPG keys are shipped in /usr/share/distribution-gpg-keys/centos
+        # SCOS however ships the keys in the /etc/pki/rpm-gpg
+        sed -i 's;/usr/share/distribution-gpg-keys/centos;/etc/pki/rpm-gpg;g' src/config/c9s.repo
+        sed -i 's/RPM-GPG-KEY-CentOS-Official/RPM-GPG-KEY-centosofficial/g' src/config/c9s.repo
+
+        cat <<EOF >> src/config/Dockerfile
+        FROM scos
+        COPY rpms/ /srv/coreos/rpms/
+        COPY src/config/c9s.repo /etc/yum.repos.d/c9s.repo
+        COPY src/config/packages-openshift.yaml /etc/rpm-ostree/origin.d/packages-openshift.yaml
+        RUN cat /etc/os-release \
+            && rpm-ostree --version \
+            && ostree --version \
+            && rpm-ostree ex rebuild \
+            && rpm-ostree cleanup -m \
+            && rm -rf /var/lib/unbound /srv/coreos/rpms /etc/rpm-ostree/origin.d /etc/yum.repos.d/c9s.repo \
+            && ostree container commit
+
+        LABEL io.openshift.release.operator=true \
+              io.openshift.build.version-display-names="machine-os=CentOS Stream CoreOS" \
+              io.openshift.build.versions="machine-os=${OSTREE_VERSION}"
+
+        EOF
+
+        podman build \
+          --from oci-archive:/srv/coreos/builds/latest/$(uname -m)/${OSTREE_TARFILE} \
+          -f src/config/Dockerfile \
+          -t localhost/ostree-okd \
+          .
+
+        # TODO Allow for pulling previously built base image, and for pushing the layered image
+
+  workspaces:
+    - mountPath: /srv
+      name: ws

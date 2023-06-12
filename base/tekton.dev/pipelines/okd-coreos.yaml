@@ -254,7 +254,16 @@ spec:
         - name: s3creds
           workspace: s3-credentials
         - name: ws
-          workspace: shared-workspace        
+          workspace: shared-workspace
+    - name: build-layer
+      runAfter:
+        - cosa-generate-release-meta
+      taskRef:
+        kind: Task
+        name: build-layer
+      workspaces:
+        - name: ws
+          workspace: shared-workspace   
   finally:
     - name: notify-matrix
       when: 
