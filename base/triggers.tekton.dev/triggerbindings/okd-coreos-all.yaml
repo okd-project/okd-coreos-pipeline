@@ -10,3 +10,5 @@ spec:
     value: $(body.params.rpm-artifacts-image)
   - name: tag-latest
     value: $(body.params.tag-latest)
+  - name: claimname
+    value: $(body.params.claimname)

@@ -34,6 +34,8 @@ spec:
     default: "!nStsazaBvZCZQHPWTY:fedoraproject.org"
   - name: matrix-endpoint
     default: 'matrix.org'
+  - name: claimname
+    default: 'pipeline-scos-stable-pvc'
   resourcetemplates:
   - apiVersion: tekton.dev/v1beta1
     kind: PipelineRun
@@ -77,6 +79,8 @@ spec:
           value: $(tt.params.matrix-room)
         - name: matrix-endpoint
           value: $(tt.params.matrix-endpoint)
+        - name: claimname
+          value: $(tt.params.claimname)
       pipelineRef:
         name: okd-coreos-all
       timeouts:
@@ -89,11 +93,5 @@ spec:
           secret:
             secretName: okd-scos-aws-config
         - name: shared-workspace
-          volumeClaimTemplate:
-            spec:
-              storageClassName: ocs-external-storagecluster-ceph-rbd
-              accessModes:
-              - ReadWriteOnce
-              resources:
-                requests:
-                  storage: 40Gi
+          persistentVolumeClaim:
+            claimName: $(tt.params.claimname)

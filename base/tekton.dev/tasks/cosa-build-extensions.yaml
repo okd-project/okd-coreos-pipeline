@@ -12,13 +12,13 @@ spec:
       name: build-extensions-container
       resources:
         limits:
-          cpu: 1000m
+          cpu: 2000m
           devices.kubevirt.io/kvm: '1'
-          memory: 4Gi
+          memory: 12Gi
         requests:
-          cpu: 1000m
+          cpu: 2000m
           devices.kubevirt.io/kvm: '1'
-          memory: 4Gi
+          memory: 12Gi
       script: |
         #!/usr/bin/env bash
         set -euxo pipefail
