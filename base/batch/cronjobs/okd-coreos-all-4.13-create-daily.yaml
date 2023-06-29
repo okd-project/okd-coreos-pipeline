@@ -25,6 +25,7 @@ spec:
                     "version": "${OKD_VERSION}",
                     "rpm-artifacts-image": "${ARTIFACTS_IMAGE}",
                     "tag-latest": "${TAG_LATEST}"
+                    "claimname": "${CLAIMNAME}"
                   }
                 }
                 EOF
@@ -41,6 +42,8 @@ spec:
                 value: "registry.ci.openshift.org/origin/4.13:artifacts"
               - name: TAG_LATEST
                 value: "false"
+              - name: CLAIMNAME
+                value: "pipeline-scos-stable-pvc"
             resources:
               limits:
                 cpu: 100m
