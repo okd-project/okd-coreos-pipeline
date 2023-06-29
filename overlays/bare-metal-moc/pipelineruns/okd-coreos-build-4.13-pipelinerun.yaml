@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  generateName: okd-coreos-all-4.13-pipelinerun-
+  generateName: okd-coreos-build-4.13-pipelinerun-
   annotations:
     operator.tekton.dev/prune.skip: "false"
     operator.tekton.dev/prune.resources: "taskrun, pipelinerun"
@@ -42,7 +42,7 @@ spec:
     nodeSelector:
        kubernetes.io/hostname: host-192-168-111-83
   pipelineRef:
-    name: okd-coreos-all
+    name: okd-coreos-build
   timeouts:
     pipeline: "4h0m0s"
   workspaces:
