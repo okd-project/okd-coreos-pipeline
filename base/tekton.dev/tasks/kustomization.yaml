@@ -6,5 +6,6 @@ bases:
   - cosa-push-container.yaml
   - cosa-test.yaml
   - cosa-upload-s3.yaml
+  - cosa-generate-release-meta.yaml
   - rpm-artifacts-copy.yaml
   - notify-matrix.yaml

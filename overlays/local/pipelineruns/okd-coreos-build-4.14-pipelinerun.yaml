@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  generateName: okd-coreos-build-4.12-pipelinerun-
+  generateName: okd-coreos-build-4.14-pipelinerun-
   annotations:
     operator.tekton.dev/prune.skip: "false"
     operator.tekton.dev/prune.resources: "taskrun, pipelinerun"
@@ -9,6 +9,8 @@ metadata:
     operator.tekton.dev/prune.strategy: "keep"
 spec:
   params:
+    - name: environment
+      value: local
     - name: repo
       value: "https://github.com/openshift/os.git"
     - name: branch
@@ -16,9 +18,11 @@ spec:
     - name: variant
       value: "scos"     
     - name: version
-      value: "4.12"
+      value: "4.14"
+    - name: release-stream
+      value: "next"
     - name: rpm-artifacts-image
-      value: "registry.ci.openshift.org/origin/4.12:artifacts"
+      value: "registry.ci.openshift.org/origin/4.14:artifacts"
   pipelineRef:
     name: okd-coreos-build
   workspaces:
@@ -27,9 +31,8 @@ spec:
     - name: shared-workspace
       volumeClaimTemplate:
         spec:
-          storageClassName: ocs-external-storagecluster-ceph-rbd
-          accessModes:
-          - ReadWriteOnce
+          accessModes: 
+            - ReadWriteOnce
           resources:
             requests:
               storage: 20Gi

@@ -14,11 +14,13 @@ spec:
     - name: repo
       value: "https://github.com/openshift/os.git"
     - name: branch
-      value: "master"
+      value: "release-4.13"
     - name: variant
       value: "scos"     
     - name: version
       value: "4.13"
+    - name: release-stream
+      value: "stable"
     - name: rpm-artifacts-image
       value: "registry.ci.openshift.org/origin/4.13:artifacts"
   pipelineRef:

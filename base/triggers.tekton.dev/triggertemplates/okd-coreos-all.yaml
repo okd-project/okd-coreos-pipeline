@@ -4,8 +4,6 @@ metadata:
   name: okd-coreos-all
 spec:
   params:
-  - name: environment
-    default: operate-first
   - name: repo
     default: "https://github.com/openshift/os.git"
   - name: branch
@@ -14,6 +12,8 @@ spec:
     default: "scos"
   - name: version
     default: "4.13"
+  - name: release-stream
+    default: "stable"
   - name: rpm-artifacts-image
     default: "registry.ci.openshift.org/origin/4.13:artifacts"
   - name: target-registry
@@ -22,14 +22,20 @@ spec:
     default: "centos-stream-coreos-9"
   - name: extensions-container-image-name
     default: "centos-stream-coreos-9-extensions"
+  - name: upload-container-images
+    default: "true"
   - name: tag-latest
     default: "false"
+  - name: upload-bootimages
+    default: "true"
   - name: s3-bucket-name
     default: "okd-scos"
   - name: s3-endpoint-url
     default: "https://okd-scos.s3.amazonaws.com/"
   - name: s3-aws-config-file
     default: "credentials"
+  - name: notify-matrix
+    default: "true"
   - name: matrix-room
     default: "!nStsazaBvZCZQHPWTY:fedoraproject.org"
   - name: matrix-endpoint
@@ -49,8 +55,6 @@ spec:
     spec:
       serviceAccountName: pipeline
       params:
-        - name: environment
-          value: $(tt.params.environment)
         - name: repo
           value: $(tt.params.repo)
         - name: branch
@@ -59,6 +63,8 @@ spec:
           value: $(tt.params.variant)   
         - name: version
           value: $(tt.params.version)
+        - name: release-stream
+          value: $(tt.params.release-stream)
         - name: rpm-artifacts-image
           value: $(tt.params.rpm-artifacts-image)
         - name: target-registry
@@ -67,14 +73,20 @@ spec:
           value: $(tt.params.baseos-container-image-name)
         - name: extensions-container-image-name
           value: $(tt.params.extensions-container-image-name)
+        - name: upload-container-images
+          value: $(tt.params.upload-container-images)
         - name: tag-latest
           value: $(tt.params.tag-latest)
+        - name: upload-bootimages
+          value: $(tt.params.upload-bootimages)
         - name: s3-bucket-name
           value: $(tt.params.s3-bucket-name)
         - name: s3-endpoint-url
           value: $(tt.params.s3-endpoint-url)
         - name: s3-aws-config-file
           value: $(tt.params.s3-aws-config-file)
+        - name: notify-matrix
+          value: $(tt.params.notify-matrix)
         - name: matrix-room
           value: $(tt.params.matrix-room)
         - name: matrix-endpoint

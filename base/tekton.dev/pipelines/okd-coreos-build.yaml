@@ -4,20 +4,23 @@ metadata:
   name: okd-coreos-build
 spec:
   params:
-    - default: 'https://github.com/openshift/os.git'
+    - default: "https://github.com/openshift/os.git"
       name: repo
       type: string
-    - default: 'release-4.12'
+    - default: "master"
       name: branch
       type: string
-    - default: 'scos'
+    - default: "scos"
       name: variant
       type: string
-    - default: '4.12'
+    - default: "4.14"
       name: version
       type: string
-    - default: "registry.ci.openshift.org/origin/4.12:artifacts"
+    - default: "registry.ci.openshift.org/origin/4.14:artifacts"
       name: rpm-artifacts-image
+      type: string
+    - name: release-stream
+      default: "next"
       type: string
     - name: s3-bucket-name
       default: ""
@@ -61,6 +64,8 @@ spec:
       runAfter:
         - cosa-init
       params:
+        - name: release-stream
+          value: $(params.release-stream)
         - name: bucket-name
           value: $(params.s3-bucket-name)
         - name: endpoint-url
@@ -101,13 +106,29 @@ spec:
           workspace: shared-workspace
     - name: cosa-buildextend
       runAfter:
-        - cosa-test
+        - cosa-build-extensions
       taskRef:
         kind: Task
         name: cosa-buildextend
       workspaces:
         - name: ws
-          workspace: shared-workspace   
+          workspace: shared-workspace 
+    - name: cosa-generate-release-meta
+      params:
+        - name: release-stream
+          value: $(params.release-stream)
+        - name: bucket-name
+          value: $(params.s3-bucket-name)
+        - name: endpoint-url
+          value: $(params.s3-endpoint-url)
+      runAfter:
+        - cosa-buildextend
+      taskRef:
+        kind: Task
+        name: cosa-generate-release-meta
+      workspaces:
+        - name: ws
+          workspace: shared-workspace 
   workspaces:
     - name: shared-workspace
     - name: s3-credentials

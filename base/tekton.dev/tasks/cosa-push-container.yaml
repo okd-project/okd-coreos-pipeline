@@ -14,7 +14,7 @@ spec:
       default: ostree
       type: string
     - name: tag
-      default: "4.12"
+      default: "4.13"
       type: string
     - name: tag-latest
       default: "false"

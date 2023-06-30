@@ -1,0 +1,36 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: cosa-generate-release-meta
+spec:
+  params:
+    - name: release-stream
+      default: ""
+      type: string
+    - name: bucket-name
+      default: ""
+      type: string
+    - name: endpoint-url
+      default: ""
+      type: string
+  steps:
+    - image: 'quay.io/coreos-assembler/coreos-assembler:latest'
+      name: generate-release-meta
+      resources: {}
+      script: |
+        #!/usr/bin/env bash
+        set -euxo pipefail
+
+        cd /srv/coreos
+        if [[ -z "$(params.endpoint-url)" || -z "$(params.bucket-name)" || -z "$(params.release-stream)" ]]; then
+          echo "Skipping release metadata generation - params not set"
+          exit 0
+        fi
+        cosa generate-release-meta \
+          --stream-baseurl=$(params.endpoint-url)/$(params.bucket-name) \
+          --stream-name=$(params.release-stream) \
+          --output=/srv/coreos/builds/latest/$(uname -m)/release.json
+
+  workspaces:
+    - mountPath: /srv
+      name: ws

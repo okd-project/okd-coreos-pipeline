@@ -4,6 +4,9 @@ metadata:
   name: cosa-upload-s3
 spec:
   params:
+    - name: release-stream
+      default: ""
+      type: string
     - name: bucket-name
       default: ""
       type: string
@@ -30,7 +33,7 @@ spec:
           --endpoint-url=$(params.endpoint-url) \
           --aws-config-file=$(workspaces.s3creds.path)/$(params.aws-config-file) \
           --acl=bucket-owner-full-control \
-           $(params.bucket-name)/builds
+           $(params.bucket-name)/$(params.release-stream)/builds
 
   workspaces:
     - name: s3creds

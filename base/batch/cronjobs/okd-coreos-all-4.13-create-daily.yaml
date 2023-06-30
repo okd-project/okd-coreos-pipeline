@@ -22,7 +22,9 @@ spec:
                 cat <<EOF > /workspace/post-body.json
                 {
                   "params": {
+                    "branch": "${BRANCH}",
                     "version": "${OKD_VERSION}",
+                    "release-stream": "${RELEASE_STREAM}",
                     "rpm-artifacts-image": "${ARTIFACTS_IMAGE}",
                     "tag-latest": "${TAG_LATEST}"
                     "claimname": "${CLAIMNAME}"
@@ -36,8 +38,12 @@ spec:
             env:
               - name: SINK_URL
                 value: "http://el-okd-coreos-all.okd-team.svc.cluster.local:8080"
+              - name: BRANCH
+                value: "release-4.13"
               - name: OKD_VERSION
                 value: "4.13"
+              - name: RELEASE_STREAM
+                value: "stable"
               - name: ARTIFACTS_IMAGE
                 value: "registry.ci.openshift.org/origin/4.13:artifacts"
               - name: TAG_LATEST

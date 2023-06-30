@@ -4,22 +4,22 @@ metadata:
   name: okd-coreos-all
 spec:
   params:
-    - name: environment
-      default: local
-      type: string
     - default: "https://github.com/openshift/os.git"
       name: repo
       type: string
-    - default: "release-4.12"
+    - default: "master"
       name: branch
       type: string
     - default: "scos"
       name: variant
       type: string
-    - default: "4.12"
+    - default: "4.14"
       name: version
       type: string
-    - default: "registry.ci.openshift.org/origin/4.12:artifacts"
+    - name: release-stream
+      default: "next"
+      type: string
+    - default: "registry.ci.openshift.org/origin/4.14:artifacts"
       name: rpm-artifacts-image
       type: string
     - name: target-registry
@@ -31,7 +31,13 @@ spec:
     - name: extensions-container-image-name
       default: "centos-stream-coreos-9-extensions"
       type: string
+    - name: upload-container-images
+      default: "false"
+      type: string
     - name: tag-latest
+      default: "false"
+      type: string
+    - name: upload-bootimages
       default: "false"
       type: string
     - name: s3-bucket-name
@@ -42,6 +48,9 @@ spec:
       type: string
     - name: s3-aws-config-file
       default: "credentials"
+      type: string
+    - name: notify-matrix
+      default: "false"
       type: string
     - name: matrix-room
       description: room id (in the format !<ROOM_ID>:<SERVER_NAME>)
@@ -87,6 +96,8 @@ spec:
         kind: Task
         name: cosa-build-baseos
       params:
+        - name: release-stream
+          value: $(params.release-stream)
         - name: bucket-name
           value: $(params.s3-bucket-name)
         - name: endpoint-url
@@ -131,13 +142,30 @@ spec:
       workspaces:
         - name: ws
           workspace: shared-workspace
+    - name: cosa-generate-release-meta
+      params:
+        - name: release-stream
+          value: $(params.release-stream)
+        - name: bucket-name
+          value: $(params.s3-bucket-name)
+        - name: endpoint-url
+          value: $(params.s3-endpoint-url)
+      runAfter:
+        - cosa-build-baseos
+        - cosa-build-extensions
+        - cosa-buildextend
+      taskRef:
+        kind: Task
+        name: cosa-generate-release-meta
+      workspaces:
+        - name: ws
+          workspace: shared-workspace
     - name: cosa-upload-baseos
       taskRef:
         kind: Task
         name: cosa-push-container
       runAfter:
-        - cosa-buildextend
-        - cosa-build-extensions
+        - cosa-generate-release-meta
       params:
         - name: target-registry
           value: $(params.target-registry)
@@ -155,29 +183,25 @@ spec:
         - name: ws
           workspace: shared-workspace
       when:
-      - input: $(params.environment)
+      - input: $(params.upload-container-images)
         operator: in
-        values:
-        - "operate-first"
+        values: ["true"]
       - input: $(tasks.cosa-buildextend.results.output)
         operator: in
         values: ["OK"] # Using $(tasks.cosa-buildextend.status) did not pass validation webhook
       - input: $(tasks.cosa-build-extensions.results.output)
         operator: in
         values: ["OK"]
-
     - name: cosa-upload-extensions
       taskRef:
         kind: Task
         name: cosa-push-container
       runAfter:
-        - cosa-buildextend
-        - cosa-build-extensions
+        - cosa-generate-release-meta
       when:
-      - input: $(params.environment)
+      - input: $(params.upload-container-images)
         operator: in
-        values:
-        - "operate-first"
+        values: ["true"]
       - input: $(tasks.cosa-buildextend.results.output)
         operator: in
         values: ["OK"] # Using $(tasks.cosa-buildextend.status) did not pass validation webhook
@@ -205,13 +229,11 @@ spec:
         kind: Task
         name: cosa-upload-s3
       runAfter:
-        - cosa-buildextend
-        - cosa-build-extensions
+        - cosa-generate-release-meta
       when:
-      - input: $(params.environment)
+      - input: $(params.upload-bootimages)
         operator: in
-        values:
-        - "operate-first"
+        values: ["true"]
       - input: $(tasks.cosa-buildextend.results.output)
         operator: in
         values: ["OK"] # Using $(tasks.cosa-buildextend.status) did not pass validation webhook
@@ -219,6 +241,8 @@ spec:
         operator: in
         values: ["OK"]
       params:
+        - name: release-stream
+          value: $(params.release-stream)
         - name: bucket-name
           value: $(params.s3-bucket-name)
         - name: endpoint-url
@@ -233,9 +257,9 @@ spec:
   finally:
     - name: notify-matrix
       when: 
-        - input: "$(params.environment)"
+        - input: "$(params.notify-matrix)"
           operator: in
-          values: ["operate-first"]
+          values: ["true"]
       params:
         - name: matrix-secret
           value: okd-bot-matrix-user

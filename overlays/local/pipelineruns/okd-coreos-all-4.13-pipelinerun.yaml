@@ -9,16 +9,16 @@ metadata:
     operator.tekton.dev/prune.strategy: "keep"
 spec:
   params:
-    - name: environment
-      value: local
     - name: repo
       value: "https://github.com/openshift/os.git"
     - name: branch
-      value: "master"
+      value: "release-4.13"
     - name: variant
       value: "scos"     
     - name: version
       value: "4.13"
+    - name: release-stream
+      value: "stable"
     - name: rpm-artifacts-image
       value: "registry.ci.openshift.org/origin/4.13:artifacts"
     - name: target-registry
@@ -27,6 +27,22 @@ spec:
       value: "centos-stream-coreos-9"
     - name: extensions-container-image-name
       value: "centos-stream-coreos-9-extensions"
+    - name: s3-bucket-name
+      value: "okd-scos"
+    - name: s3-endpoint-url
+      value: "https://okd-scos.s3.amazonaws.com/"
+    - name: matrix-room
+      value: ""
+    - name: matrix-endpoint
+      value: ""
+    - name: upload-container-images
+      value: "false"
+    - name: tag-latest
+      value: "false"
+    - name: upload-bootimages
+      value: "false"
+    - name: notify-matrix
+      value: "false"
   pipelineRef:
     name: okd-coreos-all
   timeouts:
