@@ -1,0 +1,9 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local
+  annotations:
+    description: Default storage class used by OKD Streams pipelines
+provisioner: Local
+reclaimPolicy: Delete
+volumeBindingMode: Immediate

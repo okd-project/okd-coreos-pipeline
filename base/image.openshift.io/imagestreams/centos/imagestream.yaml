@@ -1,0 +1,21 @@
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+metadata:
+  name: centos
+spec:
+  lookupPolicy:
+    local: true
+  tags:
+    - name: okd-builder
+    - name: stream9
+      from:
+        kind: DockerImage
+        name: quay.io/centos/centos:stream9
+      importPolicy:
+        scheduled: true
+    - name: stream9-minimal
+      from:
+        kind: DockerImage
+        name: quay.io/centos/centos:stream9-minimal
+      importPolicy:
+        scheduled: true

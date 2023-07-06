@@ -1,4 +1,6 @@
-bases:
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
   - cosa-build-baseos.yaml
   - cosa-build-extensions.yaml
   - cosa-buildextend.yaml

@@ -1,0 +1,32 @@
+kind: BuildConfig
+apiVersion: build.openshift.io/v1
+metadata:
+  name: okd-builder
+spec:
+  successfulBuildsHistoryLimit: 1
+  failedBuildsHistoryLimit: 2
+  source:
+    git:
+      ref: main
+      uri: https://github.com/okd-project/images
+    contextDir: builder
+    type: Git
+  strategy:
+    dockerStrategy:
+      imageOptimizationPolicy: SkipLayers
+      from:
+        kind: ImageStreamTag
+        name: "centos:stream9"
+      dockerfilePath: Dockerfile
+    type: Docker
+  output:
+    to:
+      kind: ImageStreamTag
+      name: centos:okd-builder
+  triggers:
+  - type: ConfigChange
+  - imageChange:
+      from:
+        kind: ImageStreamTag
+        name: "centos:stream9"
+    type: ImageChange
