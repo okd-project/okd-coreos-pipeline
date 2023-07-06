@@ -45,10 +45,10 @@ spec:
   workspaces:
     - name: registry-credentials
       secret:
-        secretName: okd-scos-robot-pull-secret
+        secretName: okd-quay-pull-secret
     - name: s3-credentials
       secret:
-        secretName: okd-scos-aws-config
+        secretName: okd-s3-config
     - name: shared-workspace
       persistentVolumeClaim:
         claimName: pipeline-scos-next-pvc

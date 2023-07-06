@@ -262,7 +262,7 @@ spec:
           values: ["true"]
       params:
         - name: matrix-secret
-          value: okd-bot-matrix-user
+          value: okd-matrix-bot-auth
         - name: endpoint
           value: $(params.matrix-endpoint)
         - name: room
