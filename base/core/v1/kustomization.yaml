@@ -1,5 +1,0 @@
-bases:
-  - pv-next.yaml
-  - pv-stable.yaml
-  - pvc-next.yaml
-  - pvc-stable.yaml

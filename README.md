@@ -1,105 +1,62 @@
 # OKD CoreOS Build Pipeline
 
-All the necessary yaml files to deploy a generic tekton pipeline to build a CoreOS image using coreos-assembler.
+All the necessary resources to deploy a generic Tekton pipeline to build CoreOS boot and container images using rpm-ostree and coreos-assembler.
 
-**NB** This is a WIP
+## Usage in a Kind cluster
 
-## Description
+Note: This pipeline requires [kvm-device-plugin](https://github.com/cgwalters/kvm-device-plugin) to be installed on the cluster with privileges, which the following commands will deploy. 
 
-The list of tasks are :
-* cosa-init
-* cosa-build
-* cosa-buildextend
-* cosa-test
-* cosa-upload-images
-* rpm-artifacts-copy
-
-The pipeline uses [kvm-device-plugin](https://github.com/cgwalters/kvm-device-plugin),
-which is now part of [KubeVirt](https://github.com/kubevirt).
-
-## Installation
-
-Clone the repository:
+For Kind (and possibly other) clusters, execute the following commands:
 
 ```bash
+# create and log into your cluster
+kind create cluster
+
+# clone repo
 git clone https://github.com/okd-project/okd-coreos-pipeline.git
+cd okd-coreos-pipeline
+
+# install tekton
+kubectl apply -f https://storage.googleapis.com/tekton-releases/operator/latest/release.yaml
+
+# create task and pipeline definitions
+kubectl apply -k environments/kind
+
+# check all resources have been deployed
+kubectl get all -n okd-coreos
 ```
 
-* For local (Kind or other) clusters, execute the following commands:
-    ```bash
-    # assume you logged into your local cluster
+Once all pods are in the RUNNING status create a secret that will allow you to push to the selected
+registry (pipelineRun parameter target-repository), as in the example below:
 
-    # install tekton if you haven't already
-    kubectl apply -f https://storage.googleapis.com/tekton-releases/operator/latest/release.yaml
+Sample registry auth secret file:
 
-    # the local overlay includes a device-plugin-kvm daemonset
-    kubectl apply -k overlays/local
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: my-secret
+data:
+  .dockerconfigjson: ewo...p9
+type: kubernetes.io/dockerconfigjson
+```
 
-    # check that all resources have deployed
-    kubectl get all -n okd-coreos-pipeline
-    ```
-
-    Once all pods are in the RUNNING status create a secret that will allow you to push to the selected
-    registry (pipelineRun parameter target-repository), as in the example below:
-
-    Sample secret file:
-
-    ```yaml
-    apiVersion: v1
-    kind: Secret
-    metadata:
-      name: my-secret
-    data:
-      .dockerconfigjson: ewo...p9
-    type: kubernetes.io/dockerconfigjson
-    ```
-
-    Use this command to create the secret:
-    ```bash
-    kubectl apply -f ./my-secret.yaml -n okd-coreos-pipeline
-    ```
-
-
-* OKD team members may do the following for deploying to the OperateFirst by executing the following commands:
-    ```bash
-    # assume you logged into your kubernetes cluster on OperateFirst
-    kubectl apply -k overlays/operate-first
-
-    # check that all resources have deployed
-    kubectl get all -n okd-team
-    ```
-
-## Usage
-
-### Locally
-
-Execute the following to start a pipelinerun locally:
-
+Use this command to create the secret:
 ```bash
+kubectl apply -f ./my-secret.yaml -n okd-coreos
+
+# run pipeline
 kubectl create \
-    -n okd-coreos-pipeline \
-    -f overlays/local/pipelineruns/okd-coreos-build-4.14-pipelinerun.yaml
+-n okd-coreos \
+-f environments/kind/pipelineruns/okd-coreos-build-4.14-pipelinerun.yaml
 
 # see the logs
 tkn pipelinerun logs -f \
-    -n okd-coreos-pipeline \
-    okd-coreos-build-4.14-pipelinerun-fooba
+-n okd-coreos \
+okd-coreos-build-4.14-pipelinerun-fooba
 ```
 
-### OperateFirst
-On OperateFirst, run:
-```bash
-kubectl create \
-    -n okd-team \
-    -f overlays/operate-first/pipelineruns/okd-coreos-all-4.13-pipelinerun.yaml
-
-# see the logs
-tkn pipelinerun logs -f \
-    -n okd-team \
-    okd-coreos-all-4.13-pipelinerun-fooba
-```
-
-### Sending pipeline status to Matrix room
+### Sending pipeline status notifications to a Matrix channel
 
 In order for the pipeline to be able to send its status to a matrix room, make sure you create a secret, `matrix-access-token`, of type generic with a single key, `token`, containing the access token to the matrix endpoint.
 
@@ -112,11 +69,31 @@ stringData:
   token: {OAuth token for the bot app}
 ```
 
-The pipeline run `environments/overlays/operate-first/pipelineruns/okd-coreos-all-4.*-pipelinerun.yaml` uses the following parameters:
+The pipeline run `environments/moc/pipelineruns/okd-coreos-all-4.*-pipelinerun.yaml` uses the following parameters:
 * `matrix-room` : containing the matrix roomID where the notification will be sent
 * `matrix-endpoint`: URI of the matrix server hosting the room
 
-## TODO
+## MOC
 
-* Build and test images for more platforms
-* Control the previous build, so that we build when needed
+For manually creating pipelineruns on the MOC build farm, execute the following commands:
+
+```bash
+# log into MOC build farm cluster
+
+# apply resource changes
+kubectl apply -k environments/moc
+
+# check all resources have been deployed
+kubectl get all -n okd-coreos
+
+# run pipeline
+kubectl create \
+    -n okd-coreos \
+    -f environments/moc/pipelineruns/okd-coreos-all-4.14-pipelinerun.yaml
+
+# see the logs
+tkn pipelinerun logs -f \
+    -n okd-coreos \
+    okd-coreos-all-4.14-pipelinerun-fooba
+
+```

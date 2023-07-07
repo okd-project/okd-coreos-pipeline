@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+  - ../../overlays/kvm-device-plugin
+  - ../../overlays/okd-coreos-baseline
+patches:
+- target:
+    kind: DaemonSet
+    name: kvm-device-plugin
+  patch: |-
+
+    # In a Kind cluster, we don't have an ImageStream to pull this image from,
+    # so pull it from Quay instead.
+    - op: add
+      path: /spec/template/spec/containers/0/image
+      value: quay.io/cgwalters/kvm-device-plugin:latest

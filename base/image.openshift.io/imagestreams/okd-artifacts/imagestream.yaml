@@ -1,0 +1,26 @@
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+metadata:
+  name: okd-artifacts
+spec:
+  lookupPolicy:
+    local: true
+  tags:
+    - name: "4.13"
+      from:
+        kind: DockerImage
+        name: registry.ci.openshift.org/origin/4.13:artifacts
+      importPolicy:
+        scheduled: true
+    - name: "4.14"
+      from:
+        kind: DockerImage
+        name: registry.ci.openshift.org/origin/4.14:artifacts
+      importPolicy:
+        scheduled: true
+    - name: "4.15"
+      from:
+        kind: DockerImage
+        name: registry.ci.openshift.org/origin/4.15:artifacts
+      importPolicy:
+        scheduled: true

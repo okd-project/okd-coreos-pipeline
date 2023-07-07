@@ -34,9 +34,9 @@ spec:
               name: workspace
             env:
               - name: SINK_URL
-                value: "http://el-tekton-cleanup.okd-team.svc.cluster.local:8080"
+                value: "http://el-tekton-cleanup.okd-coreos.svc.cluster.local:8080"
               - name: NAMESPACE
-                value: "okd-team"
+                value: "okd-coreos"
               - name: CLEANUP_KEEP
                 value: "0"
             resources:

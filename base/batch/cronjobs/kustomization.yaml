@@ -1,4 +1,6 @@
-bases:
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
   - okd-coreos-all-4.13-create-daily.yaml
   - okd-coreos-all-4.14-create-daily.yaml
   - tekton-cleanup-daily.yaml

@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: okd-images
+bases:
+  - ../../base/core/namespaces/okd-images
+  - ../../base/build.openshift.io/buildconfigs/kvm-device-plugin
+  - ../../base/build.openshift.io/buildconfigs/okd-builder
+  - ../../base/image.openshift.io/imagestreams/centos
+  - ../../base/image.openshift.io/imagestreams/kvm-device-plugin
+  - ../../base/image.openshift.io/imagestreams/okd-artifacts
+  - ../../base/rbac.authorization.k8s.io/rolebindings/kvm-device-plugin-image-puller
