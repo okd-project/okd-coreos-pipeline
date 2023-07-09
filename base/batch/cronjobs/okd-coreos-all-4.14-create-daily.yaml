@@ -24,7 +24,7 @@ spec:
                   "params": {
                     "branch": "${BRANCH}",
                     "version": "${OKD_VERSION}",
-                    "release-stream": "${RELEASE_STREAM}"
+                    "release-stream": "${RELEASE_STREAM}",
                     "rpm-artifacts-image": "${ARTIFACTS_IMAGE}",
                     "tag-latest": "${TAG_LATEST}",
                     "claimname": "${CLAIMNAME}"
