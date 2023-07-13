@@ -28,9 +28,10 @@ spec:
         set -euxo pipefail
 
         cd /srv/coreos
-        cosa push-container --authfile=$(workspaces.regcred.path)/.dockerconfigjson --image=$(params.image) $(params.target-registry)/$(params.container-image-name):$(params.tag)-$(uname -m)
+        cosa push-container --authfile=$(workspaces.regcred.path)/.dockerconfigjson --image=$(params.image) $(params.target-registry)/$(params.container-image-name)
         if [[ "$(params.tag-latest)" == "true" ]]; then
-          cosa push-container --authfile=$(workspaces.regcred.path)/.dockerconfigjson --image=$(params.image) $(params.target-registry)/$(params.container-image-name)
+          # Add stable tag for import into Prow
+          cosa push-container --authfile=$(workspaces.regcred.path)/.dockerconfigjson --image=$(params.image) $(params.target-registry)/$(params.container-image-name):$(params.tag)-$(uname -m)
         fi
 
   workspaces:
