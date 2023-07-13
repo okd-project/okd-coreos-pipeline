@@ -47,7 +47,7 @@ spec:
               - name: ARTIFACTS_IMAGE
                 value: "registry.ci.openshift.org/origin/4.14:artifacts"
               - name: TAG_LATEST
-                value: "false"
+                value: "true"
               - name: CLAIMNAME
                 value: "pipeline-scos-next-pvc"
             resources:
