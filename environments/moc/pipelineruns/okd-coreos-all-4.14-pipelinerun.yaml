@@ -41,6 +41,8 @@ spec:
       value: "true"
     - name: notify-matrix
       value: "true"
+    - name: claimname
+      value: pipeline-scos-next-pvc
   podTemplate:
     nodeSelector:
       kubernetes.io/hostname: host-192-168-111-83

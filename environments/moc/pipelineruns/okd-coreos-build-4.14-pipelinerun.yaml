@@ -35,6 +35,8 @@ spec:
       value: "!nStsazaBvZCZQHPWTY:fedoraproject.org"
     - name: matrix-endpoint
       value: 'matrix.org'
+    - name: claimname
+      value: pipeline-scos-next-pvc
   podTemplate:
     nodeSelector:
       kubernetes.io/hostname: host-192-168-111-83
