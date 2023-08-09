@@ -51,7 +51,7 @@ spec:
 
         # Move rpms into scope of COSA VM
         if [ -d "/srv/rpms" ]; then
-          mv /srv/rpms /srv/coreos/
+          cp -r /srv/rpms /srv/coreos/
           createrepo_c /srv/coreos/rpms
         fi
 
