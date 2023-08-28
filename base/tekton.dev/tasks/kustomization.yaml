@@ -6,6 +6,7 @@ resources:
   - cosa-buildextend.yaml
   - cosa-init.yaml
   - cosa-push-container.yaml
+  - cosa-push-layered-container.yaml
   - cosa-test.yaml
   - cosa-upload-s3.yaml
   - cosa-generate-release-meta.yaml

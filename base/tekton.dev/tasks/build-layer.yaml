@@ -12,9 +12,9 @@ spec:
       script: |
         #!/usr/bin/env bash
         set -euxo pipefail
-
+        
         dnf install -y jq
-
+        
         cd /srv/coreos
 
         OSTREE_VERSION=$(jq -r '."ostree-version"' < builds/latest/$(uname -m)/meta.json)
@@ -27,7 +27,7 @@ spec:
         sed -i 's/RPM-GPG-KEY-CentOS-Official/RPM-GPG-KEY-centosofficial/g' src/config/c9s.repo
 
         cat <<EOF >> src/config/Dockerfile
-        FROM scos
+        FROM quay.io/okd/centos-stream-coreos-9:4.14-x86_64
         COPY rpms/ /srv/coreos/rpms/
         COPY src/config/c9s.repo /etc/yum.repos.d/c9s.repo
         COPY src/config/packages-openshift.yaml /etc/rpm-ostree/origin.d/packages-openshift.yaml
@@ -45,12 +45,15 @@ spec:
 
         EOF
 
+        ls /srv/coreos/builds/latest/$(uname -m)/${OSTREE_TARFILE} 
         podman build \
-          --from oci-archive:/srv/coreos/builds/latest/$(uname -m)/${OSTREE_TARFILE} \
           -f src/config/Dockerfile \
-          -t localhost/ostree-okd \
+          -t ostree-okd \
           .
-
+        # mkdir /srv/ostree-okd
+        podman save --format oci-dir ostree-okd:latest -o /srv/ostree-okd
+        # podman tag localhost/ostree-okd quay.io/okd/stream-coreos-okd
+        # podman push  quay.io/okd/stream-coreos-okd
         # TODO Allow for pulling previously built base image, and for pushing the layered image
 
   workspaces:

@@ -1,0 +1,46 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: cosa-push-layered-container
+spec:
+  params:
+    - name: target-registry
+      default: quay.io/okd
+      type: string
+    - name: container-image-name
+      default: stream-coreos-okd
+      type: string
+    - name: image
+      default: localhost/ostree-okd
+      type: string
+    - name: tag
+      default: "4.14"
+      type: string
+    - name: tag-latest
+      default: "false"
+      type: string
+  steps:
+    - image: 'quay.io/podman/stable:latest'
+      name: upload-image
+      resources: {}
+      securityContext:
+        privileged: true
+      script: |
+        #!/usr/bin/env bash
+        set -euxo pipefail
+
+        cd /srv/coreos
+        podman images
+        podman load -i /srv/ostree-okd
+        podman tag ostree-okd:latest $(params.target-registry)/$(params.container-image-name):$(params.tag)-$(uname -m)
+        podman push $(params.target-registry)/$(params.container-image-name):$(params.tag)-$(uname -m) --authfile=$(workspaces.regcred.path)/.dockerconfigjson
+        # cosa push-container --authfile=$(workspaces.regcred.path)/.dockerconfigjson --image=$(params.image) $(params.target-registry)/$(params.container-image-name)
+        # if [[ "$(params.tag-latest)" == "true" ]]; then
+        #   # Add stable tag for import into Prow
+        #   cosa push-container --authfile=$(workspaces.regcred.path)/.dockerconfigjson --image=$(params.image) $(params.target-registry)/$(params.container-image-name):$(params.tag)-$(uname -m)
+        # fi
+
+  workspaces:
+    - name: regcred
+    - mountPath: /srv
+      name: ws

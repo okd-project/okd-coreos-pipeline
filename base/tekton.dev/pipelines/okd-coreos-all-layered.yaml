@@ -1,0 +1,254 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: okd-coreos-all-layered
+spec:
+  params:
+    - default: "https://github.com/openshift/os.git"
+      name: repo
+      type: string
+    - default: "master"
+      name: branch
+      type: string
+    - default: "scos"
+      name: variant
+      type: string
+    - default: "4.14"
+      name: version
+      type: string
+    - name: release-stream
+      default: "next"
+      type: string
+    - default: "registry.ci.openshift.org/origin/4.14:artifacts"
+      name: rpm-artifacts-image
+      type: string
+    - name: target-registry
+      default: "quay.io/okd"
+      type: string
+    - name: baseos-container-image-name
+      default: "stream-coreos"
+      type: string
+    - name: layered-os-container-image-name
+      default: "stream-coreos-okd"
+      type: string
+    - name: extensions-container-image-name
+      default: "stream-coreos-extensions"
+      type: string
+    - name: upload-container-images
+      default: "false"
+      type: string
+    - name: tag-latest
+      default: "false"
+      type: string
+    - name: upload-bootimages
+      default: "false"
+      type: string
+    - name: s3-bucket-name
+      default: ""
+      type: string
+    - name: s3-endpoint-url
+      default: ""
+      type: string
+    - name: s3-aws-config-file
+      default: "credentials"
+      type: string
+    - name: notify-matrix
+      default: "false"
+      type: string
+    - name: matrix-room
+      description: room id (in the format !<ROOM_ID>:<SERVER_NAME>)
+      type: string
+      default: "a_room"
+    - name: matrix-endpoint
+      description: room id (in the format !<ROOM_ID>:<SERVER_NAME>)
+      type: string
+      default: "an_endpoint"
+  tasks:
+    - name: rpm-artifacts-copy
+      params:
+        - name: image
+          value: $(params.rpm-artifacts-image)
+      taskRef:
+        kind: Task
+        name: rpm-artifacts-copy
+      workspaces:
+        - name: ws
+          workspace: shared-workspace
+    - name: cosa-init
+      params:
+        - name: repo
+          value: $(params.repo)
+        - name: branch
+          value: $(params.branch)
+        - name: variant
+          value: $(params.variant)
+        - name: version
+          value: $(params.version)
+      runAfter:
+        - rpm-artifacts-copy
+      taskRef:
+        kind: Task
+        name: cosa-init
+      workspaces:
+        - name: ws
+          workspace: shared-workspace
+    - name: cosa-build-baseos
+      runAfter:
+        - cosa-init
+      taskRef:
+        kind: Task
+        name: cosa-build-baseos
+      params:
+        - name: release-stream
+          value: $(params.release-stream)
+        - name: bucket-name
+          value: $(params.s3-bucket-name)
+        - name: endpoint-url
+          value: $(params.s3-endpoint-url)
+        - name: aws-config-file
+          value: $(params.s3-aws-config-file)
+      workspaces:
+        - name: s3creds
+          workspace: s3-credentials
+        - name: ws
+          workspace: shared-workspace
+    - name: cosa-test
+      params:
+        - name: variant
+          value: $(params.variant)
+      runAfter:
+        - cosa-build-baseos
+      taskRef:
+        kind: Task
+        name: cosa-test
+      workspaces:
+        - name: ws
+          workspace: shared-workspace
+    - name: cosa-build-extensions
+      runAfter:
+        - cosa-test
+      params:
+        - name: variant
+          value: $(params.variant)
+      taskRef:
+        kind: Task
+        name: cosa-build-extensions
+      workspaces:
+        - name: ws
+          workspace: shared-workspace
+    - name: cosa-buildextend
+      runAfter:
+        - cosa-test
+      taskRef:
+        kind: Task
+        name: cosa-buildextend
+      workspaces:
+        - name: ws
+          workspace: shared-workspace
+    - name: cosa-generate-release-meta
+      params:
+        - name: release-stream
+          value: $(params.release-stream)
+        - name: bucket-name
+          value: $(params.s3-bucket-name)
+        - name: endpoint-url
+          value: $(params.s3-endpoint-url)
+      runAfter:
+        - cosa-build-baseos
+        - cosa-build-extensions
+        - cosa-buildextend
+      taskRef:
+        kind: Task
+        name: cosa-generate-release-meta
+      workspaces:
+        - name: ws
+          workspace: shared-workspace
+    - name: cosa-upload-baseos
+      taskRef:
+        kind: Task
+        name: cosa-push-container
+      runAfter:
+        - cosa-generate-release-meta
+      params:
+        - name: target-registry
+          value: $(params.target-registry)
+        - name: container-image-name
+          value: $(params.baseos-container-image-name)
+        - name: image
+          value: ostree
+        - name: tag
+          value: $(params.version)
+        - name: tag-latest
+          value: $(params.tag-latest)
+      workspaces:
+        - name: regcred
+          workspace: registry-credentials
+        - name: ws
+          workspace: shared-workspace
+      when:
+      - input: $(params.upload-container-images)
+        operator: in
+        values: ["true"]
+      - input: $(tasks.cosa-buildextend.results.output)
+        operator: in
+        values: ["OK"] # Using $(tasks.cosa-buildextend.status) did not pass validation webhook
+      - input: $(tasks.cosa-build-extensions.results.output)
+        operator: in
+        values: ["OK"]
+    - name: build-layer
+      runAfter:
+        - cosa-generate-release-meta
+      taskRef:
+        kind: Task
+        name: build-layer
+      workspaces:
+        - name: ws
+          workspace: shared-workspace  
+    - name: cosa-upload-scosokd
+      taskRef:
+        kind: Task
+        name: cosa-push-layered-container
+      runAfter:
+        - build-layer
+      # when:
+      # - input: $(tasks.build-layer.results.output)
+      #   operator: in
+      #   values: ["OK"]
+      params:
+        - name: target-registry
+          value: $(params.target-registry)
+        - name: container-image-name
+          value: $(params.layered-os-container-image-name)
+        - name: image
+          value: localhost/ostree-okd #I don´t know??
+        - name: tag
+          value: $(params.version)
+        - name: tag-latest
+          value: $(params.tag-latest)
+      workspaces:
+        - name: regcred
+          workspace: registry-credentials
+        - name: ws
+          workspace: shared-workspace       
+  finally:
+    - name: notify-matrix
+      when: 
+        - input: "$(params.notify-matrix)"
+          operator: in
+          values: ["true"]
+      params:
+        - name: matrix-secret
+          value: okd-matrix-bot-auth
+        - name: endpoint
+          value: $(params.matrix-endpoint)
+        - name: room
+          value: $(params.matrix-room)
+        - name: message
+          value: "PipelineRun $(context.pipelineRun.name) - $(params.variant) - version $(params.version): Build from branch $(params.branch) $(tasks.status)"
+      taskRef:
+        kind: Task
+        name: notify-matrix
+  workspaces:
+    - name: registry-credentials
+    - name: s3-credentials
+    - name: shared-workspace
