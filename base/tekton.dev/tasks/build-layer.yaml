@@ -55,7 +55,9 @@ spec:
         # podman tag localhost/ostree-okd quay.io/okd/stream-coreos-okd
         # podman push  quay.io/okd/stream-coreos-okd
         # TODO Allow for pulling previously built base image, and for pushing the layered image
-
+        printf "%s" "OK" > $(results.output.path)
+  results:
+    - name: output
   workspaces:
     - mountPath: /srv
       name: ws

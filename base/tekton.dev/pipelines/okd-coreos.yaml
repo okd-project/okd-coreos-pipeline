@@ -26,10 +26,13 @@ spec:
       default: "quay.io/okd"
       type: string
     - name: baseos-container-image-name
-      default: "centos-stream-coreos-9"
+      default: "stream-coreos"
+      type: string
+    - name: layered-os-container-image-name
+      default: "stream-coreos-okd"
       type: string
     - name: extensions-container-image-name
-      default: "centos-stream-coreos-9-extensions"
+      default: "stream-coreos-extensions"
       type: string
     - name: upload-container-images
       default: "false"
@@ -111,14 +114,23 @@ spec:
         - name: ws
           workspace: shared-workspace
     - name: cosa-test
+      taskRef:
+        kind: Task
+        name: cosa-test
       params:
         - name: variant
           value: $(params.variant)
       runAfter:
         - cosa-build-baseos
+      workspaces:
+        - name: ws
+          workspace: shared-workspace
+    - name: build-layer
+      runAfter:
+        - cosa-test
       taskRef:
         kind: Task
-        name: cosa-test
+        name: build-layer
       workspaces:
         - name: ws
           workspace: shared-workspace
@@ -136,7 +148,7 @@ spec:
           workspace: shared-workspace
     - name: cosa-buildextend
       runAfter:
-        - cosa-test
+        - cosa-build-extensions
       taskRef:
         kind: Task
         name: cosa-buildextend
@@ -254,16 +266,24 @@ spec:
         - name: s3creds
           workspace: s3-credentials
         - name: ws
-          workspace: shared-workspace
-    - name: build-layer
-      runAfter:
-        - cosa-generate-release-meta
+          workspace: shared-workspace        
+    - name: cosa-upload-scosokd
       taskRef:
         kind: Task
-        name: build-layer
+        name: cosa-push-layered-container
+      runAfter:
+        - build-layer 
+        - cosa-generate-release-meta
       workspaces:
         - name: ws
-          workspace: shared-workspace   
+          workspace: shared-workspace  
+      when:
+      - input: $(params.upload-container-images)
+        operator: in
+        values: ["true"]
+      - input: $(tasks.build-layer.results.output)
+        operator: in
+        values: ["OK"]
   finally:
     - name: notify-matrix
       when: 

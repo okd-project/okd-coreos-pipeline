@@ -23,9 +23,11 @@ spec:
     - name: target-registry
       value: "quay.io/okd"
     - name: baseos-container-image-name
-      value: "centos-stream-coreos-9"
+      value: "stream-coreos"
+    - name: layered-os-container-image-name
+      value: "stream-coreos-okd"
     - name: extensions-container-image-name
-      value: "centos-stream-coreos-9-extensions"
+      value: "stream-coreos-extensions"
     - name: s3-bucket-name
       value: "okd-scos"
     - name: s3-endpoint-url
@@ -37,7 +39,7 @@ spec:
     - name: upload-container-images
       value: "true"
     - name: tag-latest
-      value: "true"
+      value: "false"
     - name: upload-bootimages
       value: "true"
     - name: notify-matrix

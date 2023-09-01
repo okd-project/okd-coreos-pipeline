@@ -19,9 +19,11 @@ spec:
   - name: target-registry
     default: "quay.io/okd"
   - name: baseos-container-image-name
-    default: "centos-stream-coreos-9"
+    default: "stream-coreos"
+  - name: layered-os-container-image-name
+    default: "stream-coreos-okd"
   - name: extensions-container-image-name
-    default: "centos-stream-coreos-9-extensions"
+    default: "stream-coreos-extensions"
   - name: upload-container-images
     default: "true"
   - name: tag-latest
@@ -71,6 +73,8 @@ spec:
           value: $(tt.params.target-registry)
         - name: baseos-container-image-name
           value: $(tt.params.baseos-container-image-name)
+        - name: layered-os-container-image-name
+          value: $(tt.params.layered-os-container-image-name)
         - name: extensions-container-image-name
           value: $(tt.params.extensions-container-image-name)
         - name: upload-container-images
