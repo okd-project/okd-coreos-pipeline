@@ -46,12 +46,12 @@ kubectl apply -f ./my-secret.yaml -n okd-coreos
 # run pipeline
 kubectl create \
 -n okd-coreos \
--f environments/kind/pipelineruns/okd-coreos-build-4.14-pipelinerun.yaml
+-f environments/kind/pipelineruns/okd-coreos-4.15-dev-pipelinerun.yaml
 
 # see the logs
 tkn pipelinerun logs -f \
 -n okd-coreos \
-okd-coreos-build-4.14-pipelinerun-fooba
+okd-coreos-4.15-dev-pipelinerun-fooba
 ```
 
 ### Sending pipeline status notifications to a Matrix channel
@@ -67,7 +67,7 @@ stringData:
   token: {OAuth token for the bot app}
 ```
 
-The pipeline run `environments/moc/pipelineruns/okd-coreos-all-4.*-pipelinerun.yaml` uses the following parameters:
+The pipeline run `environments/moc/pipelineruns/okd-coreos-4.*-prod-pipelinerun.yaml` uses the following parameters:
 * `matrix-room` : containing the matrix roomID where the notification will be sent
 * `matrix-endpoint`: URI of the matrix server hosting the room
 
@@ -87,11 +87,11 @@ kubectl get all -n okd-coreos
 # run pipeline
 kubectl create \
     -n okd-coreos \
-    -f environments/moc/pipelineruns/okd-coreos-all-4.14-pipelinerun.yaml
+    -f environments/moc/pipelineruns/okd-coreos-4.15-prod-pipelinerun.yaml
 
 # see the logs
 tkn pipelinerun logs -f \
     -n okd-coreos \
-    okd-coreos-all-4.14-pipelinerun-fooba
+    okd-coreos-4.15-prod-pipelinerun-fooba
 
 ```

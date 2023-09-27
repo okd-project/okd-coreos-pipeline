@@ -1,7 +1,7 @@
 apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerBinding
 metadata:
-  name: okd-coreos-all
+  name: okd-coreos-prod
 spec:
   params:
   - name: branch

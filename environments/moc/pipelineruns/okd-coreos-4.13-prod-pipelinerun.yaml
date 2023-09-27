@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  generateName: okd-coreos-all-4.13-pipelinerun-
+  generateName: okd-coreos-4.13-prod-pipelinerun-
   annotations:
     operator.tekton.dev/prune.skip: "false"
     operator.tekton.dev/prune.resources: "taskrun, pipelinerun"
@@ -17,8 +17,6 @@ spec:
       value: "scos"     
     - name: version
       value: "4.13"
-    - name: release-stream
-      value: "stable"
     - name: rpm-artifacts-image
       value: "registry.ci.openshift.org/origin/4.13:artifacts"
     - name: target-registry
@@ -32,32 +30,33 @@ spec:
     - name: s3-endpoint-url
       value: "https://okd-scos.s3.amazonaws.com/"
     - name: matrix-room
-      value: ""
+      value: "!nStsazaBvZCZQHPWTY:fedoraproject.org"
     - name: matrix-endpoint
-      value: ""
+      value: 'matrix.org'
     - name: upload-container-images
-      value: "false"
+      value: "true"
     - name: tag-latest
-      value: "false"
+      value: "true"
     - name: upload-bootimages
-      value: "false"
+      value: "true"
     - name: notify-matrix
-      value: "false"
+      value: "true"
+    - name: claimname
+      value: pipeline-scos-4.13-pvc
+  podTemplate:
+    nodeSelector:
+       kubernetes.io/hostname: host-192-168-111-83
   pipelineRef:
-    name: okd-coreos-all
+    name: okd-coreos
   timeouts:
     pipeline: "4h0m0s"
   workspaces:
     - name: registry-credentials
       secret:
-        secretName: my-secret
+        secretName: okd-quay-pull-secret
     - name: s3-credentials
-      emptyDir: {}
+      secret:
+        secretName: okd-s3-config
     - name: shared-workspace
-      volumeClaimTemplate:
-        spec:
-          accessModes: 
-            - ReadWriteOnce
-          resources:
-            requests:
-              storage: 40Gi
+      persistentVolumeClaim:
+        claimName: pipeline-scos-4.13-pvc

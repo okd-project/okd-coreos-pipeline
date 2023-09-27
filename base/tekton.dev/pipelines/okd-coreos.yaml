@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: okd-coreos-all
+  name: okd-coreos
 spec:
   params:
     - default: "https://github.com/openshift/os.git"
