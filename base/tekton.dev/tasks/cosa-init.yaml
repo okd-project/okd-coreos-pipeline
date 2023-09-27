@@ -30,8 +30,8 @@ spec:
         #!/usr/bin/env bash
         set -euxo pipefail
 
-        mkdir -p /srv/coreos
-        cd /srv/coreos
+        mkdir -p /workspace/coreos
+        cd /workspace/coreos
 
         cat << INFO
         Initializing coreos-assembler:
@@ -50,9 +50,9 @@ spec:
             $(params.repo)
 
         # Move rpms into scope of COSA VM
-        if [ -d "/srv/rpms" ]; then
-          cp -r /srv/rpms /srv/coreos/
-          createrepo_c /srv/coreos/rpms
+        if [ -d "/workspace/rpms" ]; then
+          cp -r /workspace/rpms /workspace/coreos/
+          createrepo_c /workspace/coreos/rpms
         fi
 
         # TODO: Upstream to openshift/os
@@ -63,7 +63,7 @@ spec:
 
         [artifacts]
         name=OKD RPM artifacts
-        baseurl=file:///srv/coreos/rpms/
+        baseurl=file:///workspace/coreos/rpms/
         repo_gpgcheck=0
         gpgcheck=0
         enabled=1
@@ -71,5 +71,5 @@ spec:
         EOF
 
   workspaces:
-    - mountPath: /srv
+    - mountPath: /workspace
       name: ws
