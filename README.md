@@ -4,8 +4,6 @@ All the necessary resources to deploy a generic Tekton pipeline to build CoreOS 
 
 ## Usage in a Kind cluster
 
-Note: This pipeline requires [kvm-device-plugin](https://github.com/cgwalters/kvm-device-plugin) to be installed on the cluster with privileges, which the following commands will deploy. 
-
 For Kind (and possibly other) clusters, execute the following commands:
 
 ```bash
