@@ -9,9 +9,12 @@ spec:
   accessModes:
   - ReadWriteOnce
   persistentVolumeReclaimPolicy: Delete
+  claimRef:
+    name: pipeline-scos-4.14-pvc
+    namespace: okd-coreos
   storageClassName: local
   local:
-    path: /tmp
+    path: /dev/sdc
   nodeAffinity:
     required:
       nodeSelectorTerms:

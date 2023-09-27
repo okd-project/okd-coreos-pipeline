@@ -45,7 +45,7 @@ spec:
       value: pipeline-scos-4.15-pvc
   podTemplate:
     nodeSelector:
-      kubernetes.io/hostname: host-192-168-111-83
+      kubernetes.io/hostname: host-192-168-111-72
   pipelineRef:
     name: okd-coreos
   timeouts:

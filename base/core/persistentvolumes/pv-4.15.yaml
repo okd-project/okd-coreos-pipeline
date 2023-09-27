@@ -9,9 +9,12 @@ spec:
   accessModes:
   - ReadWriteOnce
   persistentVolumeReclaimPolicy: Delete
+  claimRef:
+    name: pipeline-scos-4.15-pvc
+    namespace: okd-coreos
   storageClassName: local
   local:
-    path: /tmp
+    path: /dev/sdb
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -19,4 +22,4 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - host-192-168-111-83
+          - host-192-168-111-72
