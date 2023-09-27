@@ -1,0 +1,14 @@
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+metadata:
+  name: coreos-assembler
+spec:
+  lookupPolicy:
+    local: true
+  tags:
+    - name: "latest"
+      from:
+        kind: DockerImage
+        name: quay.io/coreos-assembler/coreos-assembler:latest
+      importPolicy:
+        scheduled: true
