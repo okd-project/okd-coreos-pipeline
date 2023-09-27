@@ -42,7 +42,7 @@ spec:
           --aws-config-file=$(workspaces.s3creds.path)/$(params.aws-config-file)
         fi
         cosa fetch
-        cosa build ostree --force-nocache
+        cosa build container --force-nocache
 
   workspaces:
     - mountPath: /workspace
