@@ -37,7 +37,7 @@ spec:
               name: workspace
             env:
               - name: SINK_URL
-                value: "http://el-okd-coreos.okd-coreos.svc.cluster.local:8080"
+                value: "http://el-okd-coreos-prod.okd-coreos.svc.cluster.local:8080"
               - name: BRANCH
                 value: "release-4.15"
               - name: OKD_VERSION
