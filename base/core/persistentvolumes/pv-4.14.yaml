@@ -14,7 +14,7 @@ spec:
     namespace: okd-coreos
   storageClassName: local
   local:
-    path: /dev/sdc
+    path: /dev/sdb
   nodeAffinity:
     required:
       nodeSelectorTerms:
