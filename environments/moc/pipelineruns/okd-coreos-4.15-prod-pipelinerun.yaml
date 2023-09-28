@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  generateName: okd-coreos-all-4.13-pipelinerun-
+  generateName: okd-coreos-4.15-prod-pipelinerun-
   annotations:
     operator.tekton.dev/prune.skip: "false"
     operator.tekton.dev/prune.resources: "taskrun, pipelinerun"
@@ -12,13 +12,13 @@ spec:
     - name: repo
       value: "https://github.com/openshift/os.git"
     - name: branch
-      value: "release-4.13"
+      value: "release-4.15"
     - name: variant
       value: "scos"     
     - name: version
-      value: "4.13"
+      value: "4.15"
     - name: rpm-artifacts-image
-      value: "registry.ci.openshift.org/origin/4.13:artifacts"
+      value: "registry.ci.openshift.org/origin/4.15:artifacts"
     - name: target-registry
       value: "quay.io/okd"
     - name: baseos-container-image-name
@@ -29,7 +29,6 @@ spec:
       value: "okd-scos"
     - name: s3-endpoint-url
       value: "https://okd-scos.s3.amazonaws.com/"
-    # TODO Update with values for OKD WG
     - name: matrix-room
       value: "!nStsazaBvZCZQHPWTY:fedoraproject.org"
     - name: matrix-endpoint
@@ -43,12 +42,12 @@ spec:
     - name: notify-matrix
       value: "true"
     - name: claimname
-      value: pipeline-scos-stable-pvc
+      value: pipeline-scos-4.15-pvc
   podTemplate:
     nodeSelector:
-       kubernetes.io/hostname: host-192-168-111-83
+      kubernetes.io/hostname: host-192-168-111-72
   pipelineRef:
-    name: okd-coreos-all
+    name: okd-coreos
   timeouts:
     pipeline: "4h0m0s"
   workspaces:
@@ -60,4 +59,4 @@ spec:
         secretName: okd-s3-config
     - name: shared-workspace
       persistentVolumeClaim:
-        claimName: pipeline-scos-stable-pvc
+        claimName: pipeline-scos-4.15-pvc

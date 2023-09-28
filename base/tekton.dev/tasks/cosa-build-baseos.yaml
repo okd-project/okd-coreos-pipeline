@@ -32,7 +32,7 @@ spec:
         #!/usr/bin/env bash
         set -euxo pipefail
 
-        cd /srv/coreos
+        cd /workspace/coreos
 
         if [[ -z "$(params.endpoint-url)" || ! -f "$(workspaces.s3creds.path)/$(params.aws-config-file)" || -z "$(params.bucket-name)" || -z "$(params.release-stream)" ]]; then
           echo "Skipping buildfetch from S3 - bucket params not set"
@@ -42,9 +42,9 @@ spec:
           --aws-config-file=$(workspaces.s3creds.path)/$(params.aws-config-file)
         fi
         cosa fetch
-        cosa build ostree --force-nocache
+        cosa build container --force-nocache
 
   workspaces:
-    - mountPath: /srv
+    - mountPath: /workspace
       name: ws
     - name: s3creds

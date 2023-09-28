@@ -1,9 +1,9 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: okd-coreos-all-4.14-create-daily
+  name: okd-coreos-4.13-prod-create-daily
 spec:
-  schedule: "30 7 * * *"
+  schedule: "0 6 * * *"
   jobTemplate:
     spec:
       template:
@@ -37,19 +37,19 @@ spec:
               name: workspace
             env:
               - name: SINK_URL
-                value: "http://el-okd-coreos-all.okd-coreos.svc.cluster.local:8080"
+                value: "http://el-okd-coreos-prod.okd-coreos.svc.cluster.local:8080"
               - name: BRANCH
-                value: "master"
+                value: "release-4.14"
               - name: OKD_VERSION
-                value: "4.14"
+                value: "4.13"
               - name: RELEASE_STREAM
-                value: "next"
+                value: "stable"
               - name: ARTIFACTS_IMAGE
-                value: "registry.ci.openshift.org/origin/4.14:artifacts"
+                value: "registry.ci.openshift.org/origin/4.13:artifacts"
               - name: TAG_LATEST
                 value: "true"
               - name: CLAIMNAME
-                value: "pipeline-scos-next-pvc"
+                value: "pipeline-scos-4.13-pvc"
             resources:
               limits:
                 cpu: 100m

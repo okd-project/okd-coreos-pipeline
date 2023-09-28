@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: okd-coreos-all
+  name: okd-coreos
 spec:
   params:
     - default: "https://github.com/openshift/os.git"
@@ -104,6 +104,7 @@ spec:
           value: $(params.s3-endpoint-url)
         - name: aws-config-file
           value: $(params.s3-aws-config-file)
+      timeout: 1h30m0s
       workspaces:
         - name: s3creds
           workspace: s3-credentials

@@ -1,7 +1,7 @@
 apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerTemplate
 metadata:
-  name: okd-coreos-all
+  name: okd-coreos-prod
 spec:
   params:
   - name: repo
@@ -41,12 +41,12 @@ spec:
   - name: matrix-endpoint
     default: 'matrix.org'
   - name: claimname
-    default: 'pipeline-scos-stable-pvc'
+    default: 'pipeline-scos-4.13-pvc'
   resourcetemplates:
   - apiVersion: tekton.dev/v1beta1
     kind: PipelineRun
     metadata:
-      generateName: okd-coreos-all-$(tt.params.version)-pipelinerun-
+      generateName: okd-coreos-$(tt.params.version)-prod-pipelinerun-
       annotations:
         operator.tekton.dev/prune.skip: "false"
         operator.tekton.dev/prune.resources: "taskrun, pipelinerun"
@@ -94,7 +94,7 @@ spec:
         - name: claimname
           value: $(tt.params.claimname)
       pipelineRef:
-        name: okd-coreos-all
+        name: okd-coreos
       timeouts:
         pipeline: "4h0m0s"
       workspaces:

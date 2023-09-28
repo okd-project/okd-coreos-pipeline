@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: pipeline-scos-stable-pv
+  name: pipeline-scos-4.14-pv
 spec:
   capacity:
     storage: 40Gi
@@ -9,9 +9,12 @@ spec:
   accessModes:
   - ReadWriteOnce
   persistentVolumeReclaimPolicy: Delete
+  claimRef:
+    name: pipeline-scos-4.14-pvc
+    namespace: okd-coreos
   storageClassName: local
   local:
-    path: /tmp
+    path: /dev/sdb
   nodeAffinity:
     required:
       nodeSelectorTerms:
