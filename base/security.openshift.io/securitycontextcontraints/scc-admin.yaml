@@ -1,0 +1,59 @@
+apiVersion: security.openshift.io/v1
+kind: SecurityContextConstraints
+metadata:
+  name: scc-admin
+allowHostDirVolumePlugin: false
+allowHostIPC: false
+allowHostNetwork: false
+allowHostPID: false
+allowHostPorts: false
+allowPrivilegeEscalation: true
+allowPrivilegedContainer: true
+allowedCapabilities: null
+defaultAddCapabilities: null
+fsGroup:
+  type: RunAsAny
+groups: []
+priority: null
+readOnlyRootFilesystem: false
+requiredDropCapabilities:
+- KILL
+- MKNOD
+- SYS_CHROOT
+runAsUser:
+  type: RunAsAny
+seLinuxContext:
+  type: RunAsAny
+supplementalGroups:
+  type: RunAsAny
+users:
+- system:serviceaccount:okd-coreos:pipeline
+volumes:
+- awsElasticBlockStore
+- azureDisk
+- azureFile
+- cephFS
+- cinder
+- configMap
+- csi
+- downwardAPI
+- emptyDir
+- ephemeral
+- fc
+- flexVolume
+- flocker
+- gcePersistentDisk
+- gitRepo
+- glusterfs
+- iscsi
+- nfs
+- persistentVolumeClaim
+- photonPersistentDisk
+- portworxVolume
+- projected
+- quobyte
+- rbd
+- scaleIO
+- secret
+- storageOS
+- vsphere
