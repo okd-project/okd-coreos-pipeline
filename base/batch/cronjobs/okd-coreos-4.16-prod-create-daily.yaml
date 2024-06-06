@@ -43,7 +43,7 @@ spec:
               - name: OKD_VERSION
                 value: "4.16"
               - name: RELEASE_STREAM
-                value: "next"
+                value: "stable"
               - name: ARTIFACTS_IMAGE
                 value: "registry.ci.openshift.org/origin/scos-4.16:artifacts"
               - name: TAG_LATEST
