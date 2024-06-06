@@ -14,7 +14,7 @@ spec:
     - name: branch
       value: "release-4.16"
     - name: variant
-      value: "scos"     
+      value: "c9s"     
     - name: version
       value: "4.16"
     - name: rpm-artifacts-image
