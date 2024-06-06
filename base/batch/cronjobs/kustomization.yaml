@@ -4,4 +4,5 @@ resources:
   - okd-coreos-4.13-prod-create-daily.yaml
   - okd-coreos-4.14-prod-create-daily.yaml
   - okd-coreos-4.15-prod-create-daily.yaml
+  - okd-coreos-4.16-prod-create-daily.yaml
   - tekton-cleanup-daily.yaml

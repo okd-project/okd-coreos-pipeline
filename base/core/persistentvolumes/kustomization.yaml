@@ -4,3 +4,4 @@ resources:
   - pv-4.13.yaml
   - pv-4.14.yaml
   - pv-4.15.yaml
+  - pv-4.16.yaml

@@ -4,3 +4,4 @@ resources:
   - pvc-4.13.yaml
   - pvc-4.14.yaml
   - pvc-4.15.yaml
+  - pvc-4.16.yaml
