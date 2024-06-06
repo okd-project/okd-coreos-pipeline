@@ -1,6 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-bases:
+resources:
   - ../../base/apps/daemonsets/kvm-device-plugin
   - ../../base/core/namespaces/kvm-device-plugin
   - ../../base/core/serviceaccounts/kvm-device-plugin
