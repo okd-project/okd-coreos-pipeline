@@ -12,3 +12,9 @@ spec:
         name: registry.ci.openshift.org/origin/scos-4.16:artifacts
       importPolicy:
         scheduled: true
+    - name: "4.17"
+      from:
+        kind: DockerImage
+        name: registry.ci.openshift.org/origin/scos-4.17:artifacts
+      importPolicy:
+        scheduled: true
