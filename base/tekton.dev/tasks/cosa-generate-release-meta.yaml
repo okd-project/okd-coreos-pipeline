@@ -15,6 +15,7 @@ spec:
       type: string
   steps:
     - image: 'quay.io/coreos-assembler/coreos-assembler:latest'
+      imagePullPolicy: Always
       name: generate-release-meta
       resources: {}
       script: |

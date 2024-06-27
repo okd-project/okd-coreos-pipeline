@@ -9,6 +9,7 @@ spec:
       type: string
   steps:
     - image: 'quay.io/coreos-assembler/coreos-assembler:latest'
+      imagePullPolicy: Always
       name: build-extensions-container
       resources:
         limits:

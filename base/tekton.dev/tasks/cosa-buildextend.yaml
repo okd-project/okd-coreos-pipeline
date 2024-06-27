@@ -5,6 +5,7 @@ metadata:
 spec:
   steps:
     - image: 'quay.io/coreos-assembler/coreos-assembler:latest'
+      imagePullPolicy: Always
       name: buildextend
       resources:
         limits:

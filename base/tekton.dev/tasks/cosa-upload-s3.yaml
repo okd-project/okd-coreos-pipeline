@@ -18,6 +18,7 @@ spec:
       type: string
   steps:
     - image: 'quay.io/coreos-assembler/coreos-assembler:latest'
+      imagePullPolicy: Always
       name: upload-image
       resources: {}
       script: |
