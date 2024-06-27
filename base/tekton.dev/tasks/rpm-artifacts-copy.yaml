@@ -9,6 +9,7 @@ spec:
       type: string
   steps:
     - image: $(params.image)
+      imagePullPolicy: Always
       name: copy-rpms
       resources: {}
       script: |
