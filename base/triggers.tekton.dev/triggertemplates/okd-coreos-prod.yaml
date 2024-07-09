@@ -9,7 +9,7 @@ spec:
   - name: branch
     default: "master"
   - name: variant
-    default: "c9s"
+    default: "okd-c9s"
   - name: version
     default: "4.13"
   - name: release-stream

@@ -14,7 +14,7 @@ spec:
     - name: branch
       value: "master"
     - name: variant
-      value: "c9s"     
+      value: "okd-c9s"
     - name: version
       value: "4.16"
     - name: release-stream

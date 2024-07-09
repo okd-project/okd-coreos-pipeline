@@ -10,7 +10,7 @@ spec:
     - default: "master"
       name: branch
       type: string
-    - default: "c9s"
+    - default: "okd-c9s"
       name: variant
       type: string
     - default: "4.14"
