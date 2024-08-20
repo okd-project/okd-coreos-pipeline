@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - pvc-4.16.yaml
   - pvc-4.17.yaml
+  - pvc-4.18.yaml
