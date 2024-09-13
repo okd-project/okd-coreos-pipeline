@@ -34,6 +34,10 @@ spec:
         # TODO: Find a more elegant way to do this
         sed -i 's/- artifacts//' $(readlink -f src/config/manifest-$(params.variant).yaml)
 
+        # build with the CentOS image rather than the ubi image. Using the ubi image is acceptable as long as we don't
+        # pull in RHEL content, but basing it on CentOS brings consistency with other images.
+        sed -ri 's/registry.access.redhat.com\/ubi([0-9]+)\/ubi:latest/quay.io\/centos\/centos:stream\1/' $(readlink -f src/config/extensions/Dockerfile)
+
         cosa build-extensions-container
         printf "%s" "OK" > $(results.output.path)
   results:
