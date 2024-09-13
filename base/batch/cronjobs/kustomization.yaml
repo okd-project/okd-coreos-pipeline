@@ -3,4 +3,5 @@ kind: Kustomization
 resources:
   - okd-coreos-4.16-prod-create-daily.yaml
   - okd-coreos-4.17-prod-create-daily.yaml
+  - okd-coreos-4.18-prod-create-daily.yaml
   - tekton-cleanup-daily.yaml
