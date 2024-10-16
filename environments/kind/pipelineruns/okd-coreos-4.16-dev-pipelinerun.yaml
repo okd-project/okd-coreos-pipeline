@@ -19,8 +19,6 @@ spec:
       value: "4.16"
     - name: release-stream
       value: "next"
-    - name: rpm-artifacts-image
-      value: "registry.ci.openshift.org/origin/scos-4.16:artifacts"
     - name: target-registry
       value: "quay.io/okd"
     - name: baseos-container-image-name

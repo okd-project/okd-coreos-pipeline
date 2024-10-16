@@ -14,8 +14,6 @@ spec:
     default: "4.13"
   - name: release-stream
     default: "stable"
-  - name: rpm-artifacts-image
-    default: "registry.ci.openshift.org/origin/4.13:artifacts"
   - name: target-registry
     default: "quay.io/okd"
   - name: baseos-container-image-name
@@ -65,8 +63,6 @@ spec:
           value: $(tt.params.version)
         - name: release-stream
           value: $(tt.params.release-stream)
-        - name: rpm-artifacts-image
-          value: $(tt.params.rpm-artifacts-image)
         - name: target-registry
           value: $(tt.params.target-registry)
         - name: baseos-container-image-name

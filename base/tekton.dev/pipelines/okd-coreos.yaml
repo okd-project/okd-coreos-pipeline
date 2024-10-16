@@ -19,9 +19,6 @@ spec:
     - name: release-stream
       default: "next"
       type: string
-    - default: "registry.ci.openshift.org/origin/4.14:artifacts"
-      name: rpm-artifacts-image
-      type: string
     - name: target-registry
       default: "quay.io/okd"
       type: string
@@ -61,16 +58,6 @@ spec:
       type: string
       default: "an_endpoint"
   tasks:
-    - name: rpm-artifacts-copy
-      params:
-        - name: image
-          value: $(params.rpm-artifacts-image)
-      taskRef:
-        kind: Task
-        name: rpm-artifacts-copy
-      workspaces:
-        - name: ws
-          workspace: shared-workspace
     - name: cosa-init
       params:
         - name: repo
@@ -81,8 +68,6 @@ spec:
           value: $(params.variant)
         - name: version
           value: $(params.version)
-      runAfter:
-        - rpm-artifacts-copy
       taskRef:
         kind: Task
         name: cosa-init

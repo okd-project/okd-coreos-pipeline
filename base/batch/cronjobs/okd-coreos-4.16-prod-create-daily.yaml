@@ -25,7 +25,6 @@ spec:
                     "branch": "${BRANCH}",
                     "version": "${OKD_VERSION}",
                     "release-stream": "${RELEASE_STREAM}",
-                    "rpm-artifacts-image": "${ARTIFACTS_IMAGE}",
                     "tag-latest": "${TAG_LATEST}",
                     "claimname": "${CLAIMNAME}"
                   }
@@ -44,8 +43,6 @@ spec:
                 value: "4.16"
               - name: RELEASE_STREAM
                 value: "stable"
-              - name: ARTIFACTS_IMAGE
-                value: "registry.ci.openshift.org/origin/scos-4.16:artifacts"
               - name: TAG_LATEST
                 value: "true"
               - name: CLAIMNAME

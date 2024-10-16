@@ -10,8 +10,6 @@ spec:
     value: $(body.params.version)
   - name: release-stream
     value: $(body.params.release-stream)
-  - name: rpm-artifacts-image
-    value: $(body.params.rpm-artifacts-image)
   - name: tag-latest
     value: $(body.params.tag-latest)
   - name: claimname

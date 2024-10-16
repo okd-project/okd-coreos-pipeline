@@ -17,8 +17,6 @@ spec:
       value: "okd-c9s"
     - name: version
       value: "4.17"
-    - name: rpm-artifacts-image
-      value: "registry.ci.openshift.org/origin/scos-4.17:artifacts"
     - name: target-registry
       value: "quay.io/okd"
     - name: baseos-container-image-name
