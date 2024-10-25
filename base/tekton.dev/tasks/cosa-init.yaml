@@ -31,6 +31,7 @@ spec:
         #!/usr/bin/env bash
         set -euxo pipefail
 
+        rm -rf /workspace/*
         mkdir -p /workspace/coreos
         cd /workspace/coreos
 
@@ -57,20 +58,31 @@ spec:
         fi
 
         # TODO: Upstream to openshift/os
-        # Get oc and hypershift from the yum repo in the artifacts image,
-        # instead of the rhel ose repo.
-        sed -i 's/rhel-9.*-server-ose.*/artifacts/' $(readlink -f src/config/manifest-$(params.variant).yaml)
+        # Get oc and hypershift from RedHat's internal mirror repo, instead of the rhel ose repo.
+        sed -i 's/rhel-9.*-server-ose.*/rhel-9-server-ose-rpms/' $(readlink -f src/config/manifest-$(params.variant).yaml)
         cat <<EOF >> src/config/c9s.repo
 
-        [artifacts]
-        name=OKD RPM artifacts
-        baseurl=file:///workspace/coreos/rpms/
+        [rhel-9-server-ose-rpms]
+        baseurl=https://mirror.openshift.com/enterprise/reposync/$(params.version)/rhel-9-server-ose-rpms
+        includepkgs=openshift-* ose-aws-ecr-* ose-azure-acr-* ose-gcp-gcr-*
+        username=$MIRROR_USER
+        password=$MIRROR_PASS
         repo_gpgcheck=0
         gpgcheck=0
         enabled=1
 
         EOF
-
+      env:
+      - name: MIRROR_USER
+        valueFrom:
+          secretKeyRef:
+            name: ose-mirror-secret
+            key: mirror-user
+      - name: MIRROR_PASS
+        valueFrom:
+          secretKeyRef:
+            name: ose-mirror-secret
+            key: mirror-pass
   workspaces:
     - mountPath: /workspace
       name: ws

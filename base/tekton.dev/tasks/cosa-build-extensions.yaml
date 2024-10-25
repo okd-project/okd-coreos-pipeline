@@ -26,13 +26,13 @@ spec:
 
         cd /srv/coreos
 
-        # The rpms that were extracted from the artifacts image
+        # The rpms that were extracted from the rhel-9-server-ose-rpms repo
         # are not present inside the container used to build the
         # extensions, however `rpm-ostree compose extensions`
         # will try to fetch metadata for all repos listed in
         # both {manifest,extensions}.yaml
         # TODO: Find a more elegant way to do this
-        sed -i 's/- artifacts//' $(readlink -f src/config/manifest-$(params.variant).yaml)
+        sed -i 's/- rhel-9-server-ose-rpms//' $(readlink -f src/config/manifest-$(params.variant).yaml)
 
         # build with the CentOS image rather than the ubi image. Using the ubi image is acceptable as long as we don't
         # pull in RHEL content, but basing it on CentOS brings consistency with other images.
