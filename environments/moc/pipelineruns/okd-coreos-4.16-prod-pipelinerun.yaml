@@ -12,9 +12,9 @@ spec:
     - name: repo
       value: "https://github.com/openshift/os.git"
     - name: branch
-      value: "master"
+      value: "release-4.16"
     - name: variant
-      value: "okd-c9s"
+      value: "c9s"
     - name: version
       value: "4.16"
     - name: target-registry
