@@ -8,6 +8,8 @@ spec:
     value: $(body.params.branch)
   - name: version
     value: $(body.params.version)
+  - name: variant
+    value: $(body.params.variant)
   - name: release-stream
     value: $(body.params.release-stream)
   - name: tag-latest
