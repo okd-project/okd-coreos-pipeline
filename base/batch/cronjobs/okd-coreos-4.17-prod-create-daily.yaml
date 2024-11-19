@@ -26,7 +26,8 @@ spec:
                     "version": "${OKD_VERSION}",
                     "release-stream": "${RELEASE_STREAM}",
                     "tag-latest": "${TAG_LATEST}",
-                    "claimname": "${CLAIMNAME}"
+                    "claimname": "${CLAIMNAME}",
+                    "variant": "${VARIANT}"
                   }
                 }
                 EOF
@@ -47,6 +48,8 @@ spec:
                 value: "true"
               - name: CLAIMNAME
                 value: "pipeline-scos-4.17-pvc"
+              - name: VARIANT
+                value: "okd-c9s"
             resources:
               limits:
                 cpu: 100m
